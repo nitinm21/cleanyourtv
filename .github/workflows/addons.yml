@@ -40,4 +40,3 @@ jobs:
             (cd "addons/$a" && chmod +x gradlew && ./gradlew --no-daemon assembleRelease)
             echo "::endgroup::"
           done
-addons/weather/app/build/outputs/apk/release/app-release.apk
