@@ -231,7 +231,9 @@ public class HomeKeyService extends AccessibilityService {
     }
 
     static boolean isShortPress(long downTime, long upTime, long longPressTimeout) {
-        return upTime - downTime < longPressTimeout;
+        // Some Xiaomi remotes repeat a held Home key as a burst of short presses; be generous so a slightly long
+        // press still opens this launcher instead of falling through to the stock home.
+        return upTime - downTime < longPressTimeout * 2;
     }
 
     private void openHome() {
