@@ -1,0 +1,25 @@
+# Toshiba 43C350NP (MediaTek MT5876, 1.5 GB), Google TV 12, build RTT2.230501.002 (agent-generated from a tools/tv.py --probe)
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/toshiba-43c350np/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/toshiba-43c350np/debloat.txt
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# Stock launcher: com.google.android.apps.tv.launcherx (replaced by launcher/)
+# Live TV app: com.mediatek.wwtv.tvcenter
+
+# Google telemetry, ads and feedback
+com.google.android.feedback
+com.google.android.play.games
+com.google.android.tvrecommendations
+com.google.android.apps.tv.dreamx            # ambient mode
+com.google.android.partnersetup
+
+# Toshiba / Vestel promo and demo
+com.toshiba.tv.retaildemo
+com.toshiba.tv.partnerrows                  # sponsored rows on the stock home
+com.toshiba.tv.feedbackagent
+
+# Preloaded apps nobody asked for
+com.amazon.amazonvideo.livingroom           # Prime Video, reinstall from Play if wanted
+com.hbo.hbonow
+com.redbull.tv.android
