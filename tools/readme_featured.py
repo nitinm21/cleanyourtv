@@ -10,6 +10,7 @@ LOGOS = ["techcrunch", "techradar", "tomsguide", "mashable", "androidauthority",
 MORE = "+171 more  ·  187 articles from 31 countries"
 W, LH, GAP, ROWGAP, PAD = 1600, 54, 40, 36, 80
 def f(size, wt):
+    """The Fredoka variable font at `size` pixels and weight `wt`."""
     x = ImageFont.truetype(FONT, size); x.set_variation_by_axes([wt]); return x
 logos = []
 for n in LOGOS:

@@ -9,6 +9,7 @@ STATS = [("252", "TV MODELS"), ("74", "BRANDS"), ("25", "LANGUAGES"), ("474 KB",
 W, H = 1600, 240
 img = Image.new("RGB", (W, H), "#15181e"); d = ImageDraw.Draw(img)
 def f(size, wt):
+    """The Fredoka variable font at `size` pixels and weight `wt`."""
     x = ImageFont.truetype(FONT, size); x.set_variation_by_axes([wt]); return x
 num, lab = f(92, 600), f(30, 500)
 PAD = 70
