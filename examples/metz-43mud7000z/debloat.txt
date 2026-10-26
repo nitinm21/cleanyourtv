@@ -1,0 +1,17 @@
+# Metz 43MUD7000Z (Skyworth-built, MediaTek MT5867, 1.5 GB), Android TV 11, build RP1A.210630.001
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/metz-43mud7000z/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/metz-43mud7000z/debloat.txt
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+
+# Google telemetry and recommendations
+com.google.android.feedback
+com.google.android.play.games
+com.google.android.tvrecommendations
+com.google.android.partnersetup
+
+# Skyworth / Metz services
+com.skyworth.sport.collect                  # usage collection
+com.metz.tv.ota.promo                       # promo overlay, OTA itself is a different package and stays
+com.coocaa.tvpi.store                       # app store rows
+com.skyworth.retaildemo
