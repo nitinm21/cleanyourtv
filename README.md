@@ -35,6 +35,9 @@ until the 19th; old links work.
 tools live only in this repo. Other domains using the name, such as cleanyourtv.com, are not run by
 this project ([#1004](https://github.com/Gathin23/cleanyourtv/issues/1004)).
 
+
+**Prebuilt launcher:** `launcher/app/release/app-release.apk` is a signed release build for people who cannot run Gradle; install it with `adb install -r launcher/app/release/app-release.apk`.
+
 ## How it works
 
 Android TVs have the same debug bridge as Android phones. Switch on USB debugging in the TV's
