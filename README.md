@@ -601,6 +601,8 @@ tools/tv.py 'settings put secure screensaver_components com.gathin.tvhome/.Clock
   (`app_keys` and `input_key_keycodes`, in config.xml or a theme; `HOME_KEY_SERVICE=1` reads `app_keys` too).
 - A `hold:` prefix on an `app_keys` entry gives that button a second app: a normal press opens the
   unprefixed app, holding for half a second opens the hold one (by keycode or `hold:scan:...`).
+- In place of an app, an `app_keys` entry can name an action: `back`, `home`, `recents`, `mute`, `sleep`,
+  `screensaver`, `settings` or `wifi`, so a spare colour button can mute the TV or, held, put it in standby.
 - `HOME_KEY_SERVICE=1` also fixes sticks whose Home key sends ALL_APPS, and opens Settings from the remote's
   **gear** button, even one Android does not map (scancodes or keycodes in config.xml).
 - With `settings_key_panel` the gear opens a [small quick settings panel](docs/quick-settings-panel.jpg)
