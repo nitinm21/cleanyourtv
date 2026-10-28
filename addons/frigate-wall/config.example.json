@@ -1,0 +1,5 @@
+{
+  "frigateUrl": "http://frigate-host:5000",
+  "rtspHost": "",
+  "newCameras": true
+}
