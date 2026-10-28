@@ -46,18 +46,46 @@ final class ServiceRepair {
                     if (name != null) enabled.add(name);
                 }
             }
-            StringBuilder updated = new StringBuilder(list == null || list.equals("null") ? "" : list);
-            boolean missing = false;
+            List<ComponentName> recorded = new ArrayList<>();
             for (String service : prefs(context).getAll().keySet()) {
-                ComponentName name = new ComponentName(context.getPackageName(), service);
-                if (enabled.contains(name)) continue;
+                recorded.add(new ComponentName(context.getPackageName(), service));
+            }
+            if (recorded.isEmpty()) return;
+            // The list without our recorded helpers, then with all of them.
+            StringBuilder others = new StringBuilder();
+            for (ComponentName name : enabled) {
+                if (recorded.contains(name)) continue;
+                if (others.length() > 0) others.append(':');
+                others.append(name.flattenToShortString());
+            }
+            StringBuilder updated = new StringBuilder(others);
+            boolean missing = false;
+            for (ComponentName name : recorded) {
+                if (!enabled.contains(name)) missing = true;
                 if (updated.length() > 0) updated.append(':');
                 updated.append(name.flattenToShortString());
-                missing = true;
             }
             if (!missing) return;
-            Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, updated.toString());
-            Settings.Secure.putInt(cr, Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+            // A killed helper also lands on Android's "Crashed services" list (dumpsys accessibility), and a
+            // crashed service is never bound again, so putting it back on the list alone binds nothing and the
+            // switch falls back to 0 (Hisense songshan, Android 11, whose standby kills third-party apps). Android
+            // drops the crashed mark when it sees the helper leave the enabled list, so add, remove, add: after a
+            // force stop the list is already empty, and a removal that changes nothing is not seen. Off the main
+            // thread, so Home does not wait for the pauses.
+            final String without = others.toString();
+            final String with = updated.toString();
+            new Thread(() -> {
+                try {
+                    Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, with);
+                    Thread.sleep(1000);
+                    Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, without);
+                    Thread.sleep(1000);
+                    Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, with);
+                    Settings.Secure.putInt(cr, Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+                } catch (RuntimeException | InterruptedException ignored) {
+                    // The setting is the system's; a refusal leaves the helper off, as before.
+                }
+            }, "ServiceRepair").start();
         } catch (RuntimeException ignored) {
             // The setting is the system's; a refusal leaves the helper off, as before.
         }

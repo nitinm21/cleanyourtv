@@ -521,6 +521,20 @@ that list. With `restore_key_services` on (`config.xml` or a theme) and `WRITE_S
 (`RESTORE_KEY_SERVICES=1` at install, `-RestoreKeyServices` on Windows), Home puts the helpers that were
 running back on the list the next time it starts; a helper turned off in Settings stays off.
 
+- **Home puts the helper back on the list after a force stop, and it still is not bound.** `dumpsys
+  accessibility` then shows `Bound services:{}`, `accessibility_enabled` falls back to `0`, and the helper
+  sits under `Crashed services`: a killed helper is marked crashed, and Android never binds a crashed
+  service again, whatever the list says. It drops the mark only when it sees the helper leave the list,
+  and after a force stop the list is already empty, so a plain removal changes nothing. `ServiceRepair`
+  therefore adds the helpers, removes them and adds them again, a second apart. Seen on a Hisense SmartTV
+  4K FFM (`songshan`, Android 11, `RTT2.220118.001`), whose standby (`com.hisense.STR_SUSPEND`) kills every
+  third-party app except the one on screen (`PowerVtImp: kill 3rd app`): the remote's app buttons stopped
+  after the first standby with another app open. By hand, the same three writes:
+
+  ```sh
+  tools/tv.py "settings put secure enabled_accessibility_services com.gathin.tvhome/.InputKeyService; sleep 1; settings put secure enabled_accessibility_services ''; sleep 1; settings put secure enabled_accessibility_services com.gathin.tvhome/.InputKeyService"
+  ```
+
 - **Enabled** means the component is in that user's colon-separated list (the class may be written in
   full, `com.gathin.tvhome/com.gathin.tvhome.HomeKeyService`). Match the whole component.
 - **Bound** means it appears under that user's `Bound services` section of the dump (`services` on older
