@@ -20,18 +20,8 @@ if (-not (Test-Path $py)) { throw 'run: python -m venv tools\venv; tools\venv\Sc
 $pkg = 'com.gathin.tvhome'
 $dir = "/sdcard/Android/data/$pkg/files"
 $revision = [guid]::NewGuid().ToString('N')
-# Restart Home so it rereads the theme. Android drops a force-stopped app's accessibility services from the
-# enabled list (asynchronously, so wait a second), which would switch off InputKeyService/HomeKeyService;
-# put the list back if it had ours. Writing the same list back is not enough: the force-stop also turns
-# accessibility_enabled off, and the service only binds again once the list changes. So restart first, then
-# clear the list, switch accessibility off (some TVs keep the service "crashed" and unbound otherwise), write
-# the list back and switch accessibility on again. On some TVs (Xiaomi MiTV-MOOR2, Android 11) Android has already
-# emptied the list and switched accessibility off by then, so clearing it changes nothing and the services stay
-# crashed: write the list back first, so the clear is a change (the same order as theme.sh). When the launcher is
-# already Home it comes back through the Home
-# intent, since `am start -n` from the shell leaves a second MainActivity behind the Home one; before the handover
-# it is started by name as before.
-$restart = "a=`$(settings get secure enabled_accessibility_services); am force-stop $pkg; case `"`$(cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -n 1)`" in $pkg/*) am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null ;; *) am start -n $pkg/.MainActivity >/dev/null ;; esac; case `"`$a`" in *$pkg*) sleep 1; settings put secure enabled_accessibility_services `"`$a`"; settings put secure accessibility_enabled 1; sleep 1; settings put secure enabled_accessibility_services ''; settings put secure accessibility_enabled 0; sleep 1; settings put secure enabled_accessibility_services `"`$a`"; settings put secure accessibility_enabled 1 ;; esac"
+# One shared recovery path verifies the helpers after Home restarts.
+
 
 # Some firmware (TCL G07, Android 11) locks the shell out of Android/data. Files are staged in
 # /data/local/tmp and copied in, or written through the launcher's ThemeProvider when that is refused.
@@ -56,7 +46,10 @@ function Drop($name) { "rm -f $dir/$name 2>/dev/null; content delete --uri $uri/
 $clearWallpapers = "mkdir -p $dir/wallpapers 2>/dev/null; rm -f $dir/wallpapers/*.jpg $dir/wallpapers/*.jpeg $dir/wallpapers/*.png $dir/wallpapers/*.webp $dir/wallpapers/*.JPG $dir/wallpapers/*.JPEG $dir/wallpapers/*.PNG $dir/wallpapers/*.WEBP 2>/dev/null; content delete --uri $uri/wallpapers 2>/dev/null"
 
 if ($Reset) {
-    & $py -I tv.py "mkdir -p $dir 2>/dev/null; $(Drop 'config.json'); $(Drop 'wallpaper.jpg'); $(Drop 'wallpapers/captions.txt'); $clearWallpapers; printf '%s' '$revision' > $tmp-theme_revision; $(Put 'theme_revision'); $restart; echo reset"
+    & $py -I tv.py "mkdir -p $dir 2>/dev/null; $(Drop 'config.json'); $(Drop 'wallpaper.jpg'); $(Drop 'wallpapers/captions.txt'); $clearWallpapers; printf '%s' '$revision' > $tmp-theme_revision; $(Put 'theme_revision')" | Out-Null
+    & $py -I theme_restart.py
+    if ($LASTEXITCODE) { throw 'Home restart recovery failed' }
+    Write-Host 'reset'
     exit 0
 }
 if (-not $Theme) { throw 'usage: theme.ps1 <theme folder> | -Reset' }
@@ -87,5 +80,7 @@ if (Test-Path $captions -PathType Leaf) {
     & $py -I tv.py (Drop 'wallpapers/captions.txt') | Out-Null
 }
 & $py -I tv.py "printf '%s' '$revision' > $tmp-theme_revision; $(Put 'theme_revision')" | Out-Null
-& $py -I tv.py "$restart; echo applied"
+& $py -I theme_restart.py
+if ($LASTEXITCODE) { throw 'Home restart recovery failed' }
+Write-Host 'applied'
 Write-Host "Theme $(Split-Path $Theme -Leaf) is on the TV. Undo with: tools\theme.ps1 -TvHost $TvHost -Reset"
