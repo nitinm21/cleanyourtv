@@ -40,7 +40,11 @@ export JAVA_HOME
 export ANDROID_HOME="${ANDROID_HOME:-$(for d in ~/Library/Android/sdk ~/Android/Sdk; do [ -d "$d" ] && echo "$d" && break; done)}"
 export ANDROID_HOME="${ANDROID_HOME:-/opt/homebrew/share/android-commandlinetools}"
 export PATH="$JAVA_HOME/bin:$PATH"
-[ -f local.properties ] || echo "sdk.dir=$ANDROID_HOME" > local.properties
+# local.properties is a Java properties file, where a backslash is an escape. Git Bash on Windows hands us
+# C:\Users\...\Sdk, which Gradle then reads as a broken path ("The filename, directory name, or volume label
+# syntax is incorrect"), and since the file is only written when missing, build-and-install.ps1 kept failing
+# on it too. Forward slashes work everywhere.
+[ -f local.properties ] || echo "sdk.dir=$(printf '%s' "$ANDROID_HOME" | tr '\\' '/')" > local.properties
 ./gradlew assembleRelease -q --console=plain
 # Which app owns Home differs by build (com.google.android.tvlauncher on Android TV,
 # com.google.android.apps.tv.launcherx on newer Google TV), so ask the TV instead of guessing.
