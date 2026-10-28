@@ -260,6 +260,8 @@ on that firmware, grouped and commented. These are starting points: comment out 
 
 Notes for models that have no tested list yet live in [`docs/devices/`](../docs/devices/):
 
+- [Amazon Fire TV Stick 4K Max 2nd gen (AFTKRT / karat)](../docs/devices/amazon-fire-tv-stick-4k-max-2023-aftkrt.md), Fire OS 8.1.7.4 / Android 11, RS8174.3648N: 22 selected disables persisted through two reboot checks, native privacy/autoplay settings, iPhone mirroring and owner-confirmed post-reboot operation; usage accepted by the owner, elapsed duration not recorded, no several-day list.
+
 - [TCL 55P71B Pro](../docs/devices/tcl-55p71b-g09-key-repeat.md) (`G09`, Google TV 12, `STT2.230203.001.AS23`, Amlogic): holding volume steps once per press as soon as any key-filtering accessibility service is bound - one helper or both, all or nothing - so the remote's app and gear buttons and a ramping volume are mutually exclusive on this build; the bisect, the capability in `dumpsys accessibility`, the way back to either behaviour and what was not tested; no debloat list of its own.
 - [Strong LEAP-S3](../docs/devices/strong-leap-s3.md) (SkyworthDigital `4K Google TV Box`, device `YDA`, Amlogic S905Y4, Google TV 14 `UKG3.260128.001.C3.0.12_20260904`): a box on the same firmware family as Wanbo X5 Pro, a one-day list kept as a note, the setupwraith/launcherx order that avoided a black screen, remote keycodes (YouTube 266, gear 83) and why `com.oemservice` and `com.sdt.deviceinfo` were looked at.
 - [TCL BeyondTV AP08](../docs/devices/tcl-beyondtv-ap08.md), `RTD2851`, Android TV 9, patch `2021-01-05`: single-session launcher and package-change report, streaming apps/voice/casting preserved, physical remote and casting checked after restart; no several-day debloat list.
