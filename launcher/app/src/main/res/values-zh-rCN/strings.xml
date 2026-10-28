@@ -49,6 +49,7 @@
     <string name="reorder_hint">按确定选中应用，方向键移动，按返回放下。再按一次返回完成。</string>
     <string name="reorder_not_saved">无法保存新顺序</string>
     <string name="app_library">应用库</string>
+    <string name="last_opened">上次打开：%1$s</string>
     <string name="library_empty">未找到可启动的应用</string>
     <string name="library_on_home">已在主屏幕</string>
     <string name="library_add_home">添加到主屏幕</string>

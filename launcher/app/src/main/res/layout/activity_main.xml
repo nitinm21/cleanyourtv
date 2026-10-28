@@ -334,7 +334,7 @@
                     style="@style/TopButtonIcon"
                     android:visibility="gone"
                     android:contentDescription="@string/app_library"
-                    android:drawableStart="@drawable/ic_apps"
+                    android:drawableStart="@drawable/ic_apps_pill"
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView

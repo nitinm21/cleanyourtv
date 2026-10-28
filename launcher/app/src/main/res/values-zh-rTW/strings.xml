@@ -73,6 +73,7 @@
     <string name="reorder_hint">按確定選取應用程式，方向鍵移動，按返回放下。再按一次返回完成。</string>
     <string name="reorder_not_saved">無法儲存新順序</string>
     <string name="app_library">應用程式庫</string>
+    <string name="last_opened">上次開啟：%1$s</string>
     <string name="library_empty">找不到可啟動的應用程式</string>
     <string name="library_on_home">已在主畫面</string>
     <string name="library_add_home">新增至主畫面</string>
