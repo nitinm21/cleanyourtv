@@ -102,6 +102,15 @@ question from the window policy on Android 11 and 12, on two vendors, whenever a
 reporter's own suggestion - a helper that synthesizes the repeat with `adjustSuggestedStreamVolume` while
 a volume key is held - is launcher code, and an off-by-default switch at best; it is not in this note.
 
+## A Hisense set too
+
+A Hisense SmartTV 4K FFM (`songshan`, MediaTek, Android 11, `RTT2.220118.001`, the second unit in
+[`examples/hisense-smarttv-4k-ffm-android11`](../../examples/hisense-smarttv-4k-ffm-android11/debloat.txt))
+does the same with `InputKeyService` alone bound: held volume up arrives as one press, and the firmware's
+own key log (`WindowManager: interceptKeyTi keyCode=24 down=true repeatCount=0`) shows no repeat after
+it. The empty-list control was not run there either. The owner kept the helper for the YouTube, Prime
+Video, Disney+, Peacock and gear buttons and lives with one step per press.
+
 ## Choices
 
 - **Keep the repeat and skip the helpers.** Do not pass `INPUT_KEY_SERVICE=1` or `HOME_KEY_SERVICE=1`
