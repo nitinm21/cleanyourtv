@@ -26,11 +26,14 @@ fi
 # Homebrew's openjdk@17 is keg-only and is never registered where java_home would find it, so check
 # the version it answers with and fall through when it is not a 17. `java -version` goes to a
 # variable rather than through `grep -q`, whose early exit can SIGPIPE the JVM under `set -o pipefail`.
+# A JRE (Temurin ships one) answers as a 17 but has no jlink, which the Android Gradle plugin needs,
+# so skip it too and fall through to Homebrew (#1255).
 if [ -z "${JAVA_HOME:-}" ]; then
   JH="$(/usr/libexec/java_home -v 17 2>/dev/null || true)"
   if [ -n "$JH" ]; then
     case "$("$JH/bin/java" -version 2>&1 || true)" in *'version "17.'*) ;; *) JH="" ;; esac
   fi
+  if [ -n "$JH" ] && [ ! -x "$JH/bin/jlink" ]; then JH=""; fi
   if [ -z "$JH" ] && [ -d /opt/homebrew/opt/openjdk@17 ]; then JH=/opt/homebrew/opt/openjdk@17; fi
   if [ -z "$JH" ]; then JH="$(java -XshowSettings:properties -version 2>&1 | awk '/java.home/ {print $3}')"; fi
   JAVA_HOME="$JH"
