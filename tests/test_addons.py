@@ -41,7 +41,9 @@ class AddonIsolationTest(unittest.TestCase):
             self.assertNotRegex(text, r"(\.\./)+addons/|\baddons/", f"{path.relative_to(ROOT)} refers to addons/")
 
     def test_no_prebuilt_apks(self):
-        apks = [str(p.relative_to(ROOT)) for p in ADDONS.rglob("*.apk")] if ADDONS.is_dir() else []
+        # Gradle's ignored build outputs are expected after compiling or testing an add-on.
+        apks = [str(p.relative_to(ROOT)) for p in ADDONS.rglob("*.apk")
+                if "build" not in p.relative_to(ADDONS).parts] if ADDONS.is_dir() else []
         self.assertEqual(apks, [], "no prebuilt APKs in addons/")
 
 
