@@ -3000,8 +3000,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (LibraryApps.save(this, pkg, false)) reloadApps(false);
             else Toast.makeText(this, R.string.library_save_failed, Toast.LENGTH_LONG).show();
         });
-        addSettingsMenuRow(rows, popup, R.string.library_app_info, () -> open(new Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + pkg))));
+        // Some firmware has no App info page at all; a row that only toasts "can't open" helps nobody.
+        Intent info = SystemSettings.appInfo(this, pkg);
+        if (info != null) addSettingsMenuRow(rows, popup, R.string.library_app_info, () -> open(info));
         panel.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         popup.setWidth(Math.max((int) (200 * density), panel.getMeasuredWidth()));
         // Dock tiles sit near the bottom of the screen: open the menu above the tile when it would not fit below.

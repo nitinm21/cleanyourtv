@@ -38,6 +38,11 @@
         <intent>
             <action android:name="android.settings.MANAGE_APPLICATIONS_SETTINGS" />
         </intent>
+        <!-- The tile menu and the app library offer App info only where this resolves (SystemSettings.appInfo). -->
+        <intent>
+            <action android:name="android.settings.APPLICATION_DETAILS_SETTINGS" />
+            <data android:scheme="package" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />

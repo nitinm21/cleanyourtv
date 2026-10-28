@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
+import android.provider.Settings;
 
 /** The standard settings intent, or, when nothing usable answers it, the first vendor settings entry
  *  from settings_fallback_components that is installed (Xiaomi China, TCL / FFALCON, Fire OS). */
@@ -31,5 +33,11 @@ final class SystemSettings {
             return new Intent().setComponent(component);
         }
         return standard;
+    }
+
+    /** The TV's App info page for pkg, or null where the firmware has none (CVTE's settings app, #1202). */
+    static Intent appInfo(Context context, String pkg) {
+        Intent info = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + pkg));
+        return context.getPackageManager().resolveActivity(info, PackageManager.MATCH_DEFAULT_ONLY) != null ? info : null;
     }
 }
