@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Coming next rows and the button: white when focused, clear otherwise. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape>
+            <solid android:color="#FFF4F4F4" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="#00000000" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</selector>

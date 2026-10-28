@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Up next</string>
+    <string name="continue_watching">Continue watching</string>
+    <string name="coming_next">Coming next</string>
+    <string name="nothing_in_progress">Nothing in progress. Start something in Stremio and it shows up here.</string>
+    <string name="season_episode">S%1$d · E%2$d</string>
+    <string name="time_left">%1$d min left</string>
+    <string name="badge_next">Next</string>
+    <string name="badge_new">New</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="stremio_connect">Connect Stremio</string>
+    <string name="stremio_disconnect">Disconnect Stremio</string>
+    <string name="stremio_scan">Scan the code with your phone, or open</string>
+    <string name="stremio_waiting">Waiting for you to log in…</string>
+    <string name="stremio_expired">The code expired. Press OK for a new one.</string>
+    <string name="stremio_unreachable">Can\'t reach Stremio. Check the connection and press OK to try again.</string>
+    <string name="no_stremio">Install the Stremio app to play this.</string>
+</resources>

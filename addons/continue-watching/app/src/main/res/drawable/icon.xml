@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The app icon: the banner's play mark and progress bar, square. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp" android:height="48dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#FF231A40" android:pathData="M0,0h108v108h-108z" />
+    <path android:fillColor="#FF7B5BE0" android:pathData="M42,30l32,20 -32,20z" />
+    <path android:fillColor="#4DFFFFFF" android:pathData="M26,80h56a3,3 0,0 1,0 6h-56a3,3 0,0 1,0 -6z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M26,80h34v6h-34a3,3 0,0 1,0 -6z" />
+</vector>
