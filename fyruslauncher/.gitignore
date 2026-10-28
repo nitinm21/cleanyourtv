@@ -1,0 +1,15 @@
+.build-cache/
+release/
+launcher/.gradle/
+launcher/build/
+launcher/app/build/
+launcher/local.properties
+portable/backups/
+portable/logs/
+portable/data/
+portable/tools/
+portable/app/*.apk
+portable/app/SHA256.txt
+*.keystore
+*.jks
+adbkey*

@@ -1,0 +1,64 @@
+FyrusLauncher 2.6 - Xiaomi Mi Box S 2nd Gen
+==========================================
+
+MULA: double-click START.bat. Ekstrak ZIP dahulu; jangan jalankan dalam ZIP.
+
+LANGKAH PERTAMA KALI
+1. Semak ADB. Jika ADB sudah tersedia, tiada download.
+   Jika tiada, luluskan download platform-tools rasmi ke tools/platform-tools.
+2. Sambung IP Mi Box semasa. Hidupkan Developer options dan USB debugging;
+   terima debugging pada TV. PC dan TV perlu di LAN yang sama.
+   Jika Wireless debugging perlukan pairing, pilih PAIR dan ikut arahan.
+3. Semak MiTV-AFKR0, sambungan Wi-Fi dan sediakan backup khusus peranti.
+4. Pasang APK siap. Tidak perlu SDK penuh, Java, Gradle atau Android Studio.
+5. Aktifkan pengalihan Home selepas membaca penerangan dan menaip HOME.
+6. Uji Home. Buka satu aplikasi dan uji juga butang Home remote fizikal.
+
+Jangan tutup installer antara langkah 3, 4 dan 5. Jika ditutup, sambung semula
+dan ulang langkah 3 supaya backup semasa tersedia. Backup asal tetap disimpan.
+
+PULIHKAN
+Menu 7 / RESTORE.bat memulihkan Home + Accessibility asal untuk Mi Box semasa.
+Sambung IP semasa; identiti fizikal diperiksa sebelum menggunakan backup.
+Backup asal: backups/<identiti-peranti>/original-state.json.
+Simpan folder backups dengan selamat. Jangan guna backup Mi Box lain.
+APK dan data FyrusLauncher tidak dipadam ketika Restore Home.
+
+Menu 8 ialah PILIHAN sahaja: disable PatchWall, Play Games dan Play Movies
+selepas taip DISABLE3. Xiaomi TV+ dikekalkan. Submenu restore apps memulihkan
+keadaan asal daripada rekod optional-apps.json. Tiada debloat automatik.
+
+APA YANG BERUBAH PADA TV
+Home dialihkan melalui Accessibility, bukan menggantikan resolver Google TV.
+Google TV launcher dan setupwraith kekal enabled. Tiada clear data, factory
+reset, atau perubahan profil Wi-Fi. Cast, GMS dan streaming lain dikekalkan.
+Disebabkan sekatan firmware, Google TV boleh kelihatan seketika ketika Home.
+Firmware MiTV-AFKR0 Android 11 diuji; format/model berbeza akan dihentikan
+jika pemeriksaan tidak dapat disahkan. Reboot dan remote lain perlu diuji.
+
+PAPARAN
+Tahan OK pada Settings di Home > Launcher settings.
+Netflix Card ON = 7 poster New on Netflix.
+Location Wallpaper ON = gambar lokasi; description hilang ketika scroll bawah.
+Kedua-duanya OFF = Aurora + cahaya yang mengikut warna aplikasi difokuskan.
+Ikon Wi-Fi sahaja di header. Continue Watching tidak disediakan.
+
+SUSUNAN FOLDER
+app/      APK, checksum dan skrip dalaman. Tidak perlu dibuka oleh pengguna.
+tools/    Platform-tools jika dimuat turun. Tiada pemasangan ke C:\ atau PATH.
+backups/  Backup berasingan bagi setiap Mi Box. Kandungan ini bersifat peribadi.
+logs/     Output diagnostik setiap sesi dan log server ADB.
+data/     Ruang fail kerja tempatan pakej.
+
+BUANG DARI PC
+Keluar melalui menu 0 supaya server ADB pakej ini (port 5038) dihentikan.
+Jika mahu Home asal di TV, buat Restore dahulu. Kemudian padam folder ini.
+Memadam folder PC sahaja tidak membuang aplikasi atau pengalihan Home di TV.
+Installer tidak memasang SDK/JDK, mengubah PATH atau registry.
+ADB rasmi Windows menggunakan kunci debugging standard dalam profil pengguna
+(biasanya %USERPROFILE%\.android). Kunci itu mungkin dikongsi dengan alat
+Android lain dan tidak dipadam secara automatik oleh pakej ini.
+
+PAKEJ UNTUK DIKONGSI
+Gunakan ZIP keluaran bersih FyrusLauncher, bukan ZIP folder selepas digunakan.
+Jangan kongsi backups, logs, data atau kunci ADB anda kepada orang lain.
