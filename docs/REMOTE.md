@@ -121,3 +121,5 @@ With option B, use the TV's local address instead of `100.x.y.z`.
    (or turn off its routes) in the admin console. Uninstall Tailscale from the TV unless they use it.
 
 Did this on a TV where something worked differently? Add a line here in a pull request.
+
+On Xiaomi remotes the Menu button can be used as a second Home key once the key helper is enabled.
