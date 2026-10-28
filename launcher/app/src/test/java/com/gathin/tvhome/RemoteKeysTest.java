@@ -93,4 +93,10 @@ public class RemoteKeysTest {
         assertEquals("app", RemoteKeys.target("app", null, 5000));
         assertNull(RemoteKeys.target(null, "hold.app", 0));
     }
+
+    @Test public void inputsTargetKeptForAScancode() {
+        Map<Integer, String> scans = RemoteKeys.parseAppScancodes(Arrays.asList("scan:365:inputs"));
+        assertEquals(RemoteKeys.INPUTS, scans.get(365));
+        assertNull(RemoteKeys.inputId(RemoteKeys.INPUTS));
+    }
 }

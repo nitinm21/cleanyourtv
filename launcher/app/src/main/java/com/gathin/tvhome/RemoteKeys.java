@@ -22,12 +22,16 @@ import java.util.function.ToIntFunction;
  * prefix makes an entry the long-press action instead: "hold:KEYCODE_BUTTON_8:org.xbmc.kodi" opens Kodi when
  * that button is held for HOLD_MS, while the unprefixed entry still opens on a tap; "hold:scan:490:..." does
  * the same for a scancode. One set of maps for both services; whichever filters the key first consumes it.
- * A target of "input:<input id>" switches to that TV input (an HDMI port) instead of opening an app.
+ * A target of "input:<input id>" switches to that TV input (an HDMI port) instead of opening an app, and a target
+ * of "inputs" opens the input switcher, for a remote whose source button sends a key Android does not map.
  */
 final class RemoteKeys {
 
     /** How long a button is held before its "hold:" entry wins (Android's long-press timeout). */
     static final long HOLD_MS = 500;
+
+    /** The app_keys target that opens the input switcher, as "scan:365:inputs". */
+    static final String INPUTS = "inputs";
 
     private RemoteKeys() { }
 
@@ -157,6 +161,16 @@ final class RemoteKeys {
      *  switches to that TV input (an HDMI port) instead. */
     static void launch(Context ctx, String pkg) {
         if (pkg == null) return;
+        if (INPUTS.equals(pkg)) {
+            // This launcher's own Inputs menu, as InputsRequestActivity opens it: addressed to Home directly, so a
+            // vendor input picker that also answers VIEW_INPUTS never turns it into a chooser.
+            try {
+                ctx.startActivity(new Intent(ctx, MainActivity.class).setAction(MainActivity.ACTION_VIEW_INPUTS)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            } catch (ActivityNotFoundException ignored) {
+            }
+            return;
+        }
         String inputId = inputId(pkg);
         if (inputId != null) {
             // The same passthrough URI the Inputs menu opens, which the Live TV app handles.
