@@ -59,4 +59,7 @@ jobs:
           og-pc-api-key: ${{ secrets.OG_PC_API_KEY }}
           pr: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr }}
           force: ${{ github.event_name == 'issue_comment' }}
-          daily-cap-usd: "10"
+          daily-cap-usd: "1"
+          per-pr-cap-usd: "0.05"
+          model: glm-5.3-flash
+          critic-model: glm-5.3-flash
