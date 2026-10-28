@@ -705,8 +705,11 @@ they do not map, so they are not consuming the volume key. The same was reported
 alone (#944), where the empty list was not tried because it also unhooks the buttons the helpers were
 installed for. An onn 4K Streaming Box (`YOC`, Google TV 14, `URO4.260304.011.B1.15051976`) does the same with
 `HomeKeyService` alone; there `key_filter` false (config.xml or a theme) brought the repeat back with the helper
-still bound, so a helper kept for something other than keys need not cost it. Check the state first, do not
-rewrite it blind:
+still bound, so a helper kept for something other than keys need not cost it. A Hisense 75U75N (`hengshan`,
+Google TV 12, `STT2.230310.002`) with a CEC soundbar does it with `HomeKeyService` alone, and its log shows where
+the repeat goes: the filter hands volume keys to the window policy first, Hisense's policy sends the CEC step and
+consumes the key, so no helper sees it and nothing repeats (the G09 note has the log). Check the state first, do
+not rewrite it blind:
 
 ```sh
 tools/tv.py 'settings get secure enabled_accessibility_services'
