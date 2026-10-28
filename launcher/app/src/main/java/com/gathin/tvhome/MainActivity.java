@@ -423,6 +423,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         greeting = findViewById(R.id.greeting);
         clockBlock = findViewById(R.id.leftBlock);
         greetingColor = greeting.getCurrentTextColor();
+        if (!cfg.showGreeting) greeting.setVisibility(View.GONE);
+        if (cfg.headerWhite) {
+            // The clock's own white for the date and the line before it, instead of their dimmed whites.
+            ((TextView) findViewById(R.id.date)).setTextColor(Color.WHITE);
+            findViewById(R.id.clockDivider).setBackgroundColor(Color.WHITE);
+        }
         if (getResources().getBoolean(R.bool.rtl_menu_bar)) {
             // Center Hebrew greetings over the numeric time, independent of a visible AM/PM label.
             findViewById(R.id.clock).addOnLayoutChangeListener((v, l, t, right, bottom, ol, ot, or, ob) -> {

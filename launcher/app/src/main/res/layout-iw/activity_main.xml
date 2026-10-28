@@ -218,6 +218,7 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/clockDivider"
                     android:layout_width="1dp"
                     android:layout_height="26dp"
                     android:layout_gravity="bottom"
