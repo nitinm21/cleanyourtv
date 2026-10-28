@@ -288,6 +288,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         public void onLost(@NonNull Network network) {
             handler.post(MainActivity.this::updateWifiLabel);
         }
+
+        /** wifi_status_warnings follows validation; signal-strength updates also land here, so skip those. */
+        private boolean lastValidated;
+
+        @Override
+        public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities caps) {
+            boolean validated = caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+            if (validated == lastValidated) return;
+            lastValidated = validated;
+            if (wifiNoInternetTint != null) handler.post(MainActivity.this::updateWifiLabel);
+        }
     };
     /** Shows the Inputs pill once the TV registers an input: at boot HDMI inputs can appear after Home is shown. */
     private final TvInputManager.TvInputCallback inputCallback = new TvInputManager.TvInputCallback() {
@@ -625,6 +636,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (cfg.wifiStatusColor) {
             wifiPlainTint = btnWifi.getCompoundDrawableTintList();
             wifiOnlineTint = getColorStateList(R.color.pill_icon_online);
+            if (cfg.wifiStatusWarnings) {
+                wifiNoInternetTint = getColorStateList(R.color.pill_icon_no_internet);
+                wifiOfflineTint = getColorStateList(R.color.pill_icon_offline);
+            }
         }
         if (cfg.topMenu) {
             // One gear: Inputs and Wi-Fi move into its dropdown. The Wi-Fi pill stays hidden but keeps its
@@ -2363,7 +2378,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     /** Shows the Wi-Fi network name on the button when we can read it, otherwise the connection type. */
     private void updateWifiLabel() {
         String text = getString(R.string.wifi);
-        boolean vpn = false, online = false;
+        boolean vpn = false, online = false, validated = false;
         int icon = R.drawable.ic_wifi;
         // The diya's flame: 0 is out (offline), 1 to 4 follow the Wi-Fi signal, Ethernet burns steady at 4.
         int flame = 0;
@@ -2381,6 +2396,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 }
                 if (!caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) continue;
                 online = true;
+                // Android reached the internet through it; a captive portal stays unvalidated until login.
+                if (caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) validated = true;
                 if (caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) ethernet = true;
                 if (caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) wifi = true;
             }
@@ -2448,6 +2465,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 btnWifi.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0);
             }
             ColorStateList tint = online ? wifiOnlineTint : wifiPlainTint;
+            // wifi_status_warnings: orange while connected but not validated (a captive portal), red while offline.
+            if (wifiNoInternetTint != null) tint = !online ? wifiOfflineTint : validated ? wifiOnlineTint : wifiNoInternetTint;
             if (wifiOnlineTint != null && btnWifi.getCompoundDrawableTintList() != tint) {
                 btnWifi.setCompoundDrawableTintList(tint);
             }
@@ -2465,6 +2484,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean wifiIconOnly;
     /** config.xml wifi_status_color: the Wi-Fi icon's green while online and its usual pill colours; null while off. */
     private ColorStateList wifiOnlineTint, wifiPlainTint;
+    /** wifi_status_warnings (with wifi_status_color): orange without internet, red offline; null while off. */
+    private ColorStateList wifiNoInternetTint, wifiOfflineTint;
     /** The app library button in the top bar (library_button). */
     private View btnLibraryTop;
     /** The open library came from that button: closing it returns there instead of scrolling to the grid's end. */

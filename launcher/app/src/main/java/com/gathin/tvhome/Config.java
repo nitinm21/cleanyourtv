@@ -206,6 +206,8 @@ final class Config {
     final boolean handleViewInputs;
     /** Hold OK on a tile opens a menu (Move, Remove from Home, App info) instead of App info (config.xml / theme tile_menu). */
     final boolean tileMenu;
+    /** With wifi_status_color, the icon orange while connected without internet (a captive portal) and red while offline (config.xml, wifi_status_warnings). */
+    final boolean wifiStatusWarnings;
 
     private Config(List<String> dockApps, boolean fillDock, List<String> hiddenApps, List<String> libraryApps, String liveTvPackage,
                    String liveTvAction, String liveTvInputId, Map<String, String> launchActions, Map<String, String> appLabels,
@@ -220,7 +222,7 @@ final class Config {
                    List<RaceWeekend.Race> raceCalendar, boolean cinematicHome, boolean ambientGlow, boolean appGlow, boolean fadeRows, int homeIdleClockMinutes,
                    boolean keyFilter, boolean dockGlass, String glowStyle, boolean wallpaperCaptions,
                    boolean handleViewInputs, boolean tileMenu, boolean dockEvenPadding, boolean cinematicDots, boolean cinematicWhiteFocus, boolean wifiStatusColor, int cinematicScrim, int cinematicArt,
-                   Map<String, Set<String>> wallpaperMoods, boolean gamepadPassthrough) {
+                   Map<String, Set<String>> wallpaperMoods, boolean gamepadPassthrough, boolean wifiStatusWarnings) {
         this.handleViewInputs = handleViewInputs;
         this.tileMenu = tileMenu;
         this.inputKeycodes = inputKeycodes;
@@ -300,6 +302,7 @@ final class Config {
         this.cinematicScrim = cinematicScrim;
         this.wallpaperMoods = wallpaperMoods;
         this.gamepadPassthrough = gamepadPassthrough;
+        this.wifiStatusWarnings = wifiStatusWarnings;
         this.glowStyle = glowStyle(glowStyle);
         this.wallpaperCaptions = wallpaperCaptions;
     }
@@ -387,6 +390,7 @@ final class Config {
         int cinematicScrim = res.getInteger(R.integer.cinematic_scrim);
         Map<String, Set<String>> wallpaperMoods = moods(res.getString(R.string.wallpaper_moods));
         String glowStyle = res.getString(R.string.glow_style);
+        boolean wifiStatusWarnings = res.getBoolean(R.bool.wifi_status_warnings);
         boolean applied = false;
 
         File dir = dir(ctx);
@@ -466,6 +470,7 @@ final class Config {
             cinematicScrim = integer(json, "cinematic_scrim", cinematicScrim, 0, 100);
             JSONObject moods = json.optJSONObject("wallpaper_moods");
             if (moods != null) wallpaperMoods = moods(moods);
+            wifiStatusWarnings = bool(json, "wifi_status_warnings", wifiStatusWarnings);
             glowStyle = string(json, "glow_style", glowStyle);
         }
         // A theme push or reset invalidates choices made on the TV. On first use, remember the
@@ -520,7 +525,7 @@ final class Config {
                 Math.max(0, Math.min(100, skyIntensity)), settingsKeycodes, settingsKeyPanel, restoreKeyServices, wallpaperEnabled, wallpaper,
                 wallpapers, rotationMinutes, wallpaperDim, dockOpacity, wallpaperOrder, applied,
                 festival, inputKeycodes, appKeys, stockHomeRedirect, json == null ? Collections.emptyList() : raceCalendar(json), cinematic, ambientGlow, appGlow, fadeRows,
-                Math.max(0, idleClockMinutes), keyFilter, dockGlass, glowStyle, wallpaperCaptions, handleViewInputs, tileMenu, dockEvenPadding, cinematicDots, cinematicWhiteFocus, wifiStatusColor, cinematicScrim, cinematicArt, wallpaperMoods, gamepadPassthrough);
+                Math.max(0, idleClockMinutes), keyFilter, dockGlass, glowStyle, wallpaperCaptions, handleViewInputs, tileMenu, dockEvenPadding, cinematicDots, cinematicWhiteFocus, wifiStatusColor, cinematicScrim, cinematicArt, wallpaperMoods, gamepadPassthrough, wifiStatusWarnings);
     }
 
     /**
