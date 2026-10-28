@@ -206,6 +206,13 @@
          through it. false (the default) keeps the solid near-black band, or the cinematic shelf's dark glass. Can
          also be set with "dock_glass": true in a theme's config.json. -->
     <bool name="dock_glass">false</bool>
+    <!-- Every app in one row: the dock apps first, the rest after them, and the row scrolls sideways when focus
+         reaches its edge. No grid below; rows_below_dock is ignored. Needs dock_row. Can also be set with
+         "single_row" in a theme. -->
+    <bool name="single_row">false</bool>
+    <!-- With single_row, the band runs behind every app in the row, apps installed later included, instead of
+         the dock apps only. Can also be set with "dock_band_all" in a theme. -->
+    <bool name="dock_band_all">false</bool>
     <!-- The dock band's padding equals the gap between its tiles on all four sides (as far as the grid's edges leave room),
          so its corners are concentric with the tiles' and the spacing reads even. false (the default) keeps the fixed
          14dp above and below, up to 22dp at the sides and 26dp corners. Can also be set with "dock_even_padding": true in a theme's config.json. -->
