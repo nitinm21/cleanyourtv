@@ -222,6 +222,7 @@ Anker Nebula, BYINTEK, Epson, Formovie, Gadnic, JMGO, Magcubic, Portronics, Stel
 | Portronics Beem 470 Smart LED Projector (Allwinner H713, 1 GB), India | Android 11 |
 | PRISM+ Q65 Ultra 2026 QLED 4K AI Google TV (R10G, PRISMPLUS_FFM, MOKA, Realtek RTD2875 SoC, RTD6748 platform) | Google TV 14 |
 | RCA AI PONT SA (Changhong, redwood, ISDB92RC; also sold as realme 40-inch and AIWA AW32B4SMG) | Android 14 |
+| RCA RC50A21S-4KSM, Zeasn home (Toptech firmware RTK2851P, Realtek RTD2851P, board mac6p) | Android TV 9 |
 | Redmi TV (MiTV-ANTL0, starwars) | Android 5.1.1 (not Android TV) |
 | Redmi TV (MiTV-MFTP0, alita), China firmware 23.2.10.6129 | Android TV 9 (CN build) |
 | RockTek GB1 | Google TV 14 |
