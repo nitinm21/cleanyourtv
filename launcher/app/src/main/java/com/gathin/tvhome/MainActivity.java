@@ -228,6 +228,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private static LocalDate lastPetalShower;
     /** boot_to_live_tv: open the Live TV app on the first Home of each boot. */
     private boolean bootToLiveTv;
+    /** open_on_start_choice: the app picked in Launcher settings may open on the first Home of each boot. */
+    private boolean openOnStartChoice;
     /** hidden_apps as the adapter sees them (config.xml or a theme's config.json): a hidden app gets no card either. */
     private Set<String> hiddenApps = Collections.emptySet();
     private List<Cards.Card> cards = Collections.emptyList();
@@ -374,6 +376,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         liveTvPkg = cfg.liveTvPackage;
         idleClockMs = cfg.homeIdleClockMinutes * MINUTE_MS;
         bootToLiveTv = cfg.bootToLiveTv;
+        openOnStartChoice = cfg.openOnStartChoice;
         liveTvAction = cfg.liveTvAction;
         liveTvInputId = cfg.liveTvInputId;
         appLibraryEnabled = cfg.appLibrary;
@@ -2566,15 +2569,20 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         btnInputs.setVisibility(any ? View.VISIBLE : View.GONE);
     }
 
-    /** boot_to_live_tv: the first time Home comes up after the TV starts, open the Live TV app instead. Once per
-     *  boot, keyed on Settings.Global.BOOT_COUNT, so a later Home press stays on Home. */
+    /** boot_to_live_tv, or the Open on start app: the first time Home comes up after the TV starts, open that app
+     *  instead. Once per boot, keyed on Settings.Global.BOOT_COUNT and committed to disk before the app starts: on a
+     *  low-memory TV the app can push the launcher out of memory, and an apply() still in flight was lost then, so
+     *  every Home press opened the app again. */
     private boolean openLiveTvAfterBoot() {
-        if (!bootToLiveTv) return false;
-        int boot = Settings.Global.getInt(getContentResolver(), Settings.Global.BOOT_COUNT, -1);
-        SharedPreferences prefs = getSharedPreferences("boot", MODE_PRIVATE);
-        if (boot < 0 || prefs.getInt("live_tv_boot", -1) == boot) return false;
-        prefs.edit().putInt("live_tv_boot", boot).apply();
-        Intent i = liveTvIntent();
+        String app = openOnStartChoice ? getSharedPreferences(Config.SETTINGS_NAME, MODE_PRIVATE)
+                .getString(OpenOnStart.KEY, "") : "";
+        if (!bootToLiveTv && app.isEmpty()) return false;
+        int boot = OpenOnStart.boot(this);
+        SharedPreferences prefs = getSharedPreferences(OpenOnStart.BOOT_PREFS, MODE_PRIVATE);
+        String target = bootToLiveTv ? liveTvPkg : app;
+        if (!OpenOnStart.due(boot, prefs.getInt(OpenOnStart.BOOT_KEY, -1), target, getPackageName())) return false;
+        if (!prefs.edit().putInt(OpenOnStart.BOOT_KEY, boot).commit()) return false;
+        Intent i = bootToLiveTv ? liveTvIntent() : OpenOnStart.intent(getPackageManager(), app);
         if (i == null) return false;
         open(i);
         return true;

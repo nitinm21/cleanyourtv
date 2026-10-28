@@ -41,6 +41,12 @@
          "boot_to_live_tv": true in a theme's config.json. -->
     <bool name="boot_to_live_tv">false</bool>
 
+    <!-- An "Open on start" row in Launcher settings: pick any app on the TV, and the first time Home comes up
+         after the TV starts it opens that app instead. Once per boot, like boot_to_live_tv (which wins when
+         both are set); Home after that stays Home, and an app that is gone or disabled leaves Home on screen.
+         Off by default; a theme can set "open_on_start_choice": true. -->
+    <bool name="open_on_start_choice">false</bool>
+
     <!-- Some TVs give their Live TV app no leanback entry point at all, so `live_tv_package` above
          resolves to nothing (TCL Android TV 9 on China-market sets is one). This action is then sent
          to that package instead, and the app starts normally. Leave empty to omit. -->
