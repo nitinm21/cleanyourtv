@@ -40,6 +40,16 @@ TV_HOST=<tv ip> tools/venv/bin/python -I tools/tv.py --push addons/<name>/app/bu
 TV_HOST=<tv ip> tools/venv/bin/python -I tools/tv.py 'pm install -r /data/local/tmp/addon.apk; rm -f /data/local/tmp/addon.apk'
 ```
 
+Or let `tools/manage.py` do it the creator's way: it lists every add-on with its screenshot, shows which are on
+the TV, and installs, updates or removes one by running the add-on's own `install.sh` or `build-and-install.sh`
+(or the three steps above when it has none):
+
+```bash
+tools/venv/bin/python -I tools/manage.py list addons
+TV_HOST=<tv ip> tools/venv/bin/python -I tools/manage.py status
+TV_HOST=<tv ip> tools/venv/bin/python -I tools/manage.py install weather
+```
+
 ## Rules
 
 - **Its own app.** One folder per add-on, `addons/<name>/`, with its own Gradle project

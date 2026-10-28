@@ -12,6 +12,10 @@ TV_HOST=192.168.1.50 tools/theme.sh --reset                # back to the built-i
 powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 themes\aurora
 ```
 
+`tools/manage.py list themes` and `list switches` list them from this file, `show <name>` gives one with its
+screenshot, and `manage.py set <switch> <value> --theme <your folder>` writes a key into a theme of your own and
+pushes it with `theme.sh`.
+
 | Theme | What it does | Screenshot |
 |---|---|---|
 | `default/` | The built-in look written out as JSON, as a starting point for your own | <img src="default/screenshot.jpg" width="320" alt="default theme"> |
