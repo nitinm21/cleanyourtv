@@ -10,7 +10,7 @@ project's own issue tracker.
 
 **Jump to:** [Home screens built as their own app](#home-screens-built-as-their-own-app) · [Forks of the launcher](#forks-of-the-launcher) · [Screensavers and add-ons](#screensavers-and-add-ons) · [Tools and companion apps](#tools-and-companion-apps) · [Other platforms: Fire TV and LG webOS](#other-platforms-fire-tv-and-lg-webos) · [Add-ons in this repo](addons/README.md) · [Guides and write-ups](#guides-and-write-ups) · [Find a project by TV brand](#find-a-project-by-tv-brand) · [Add yours](#add-yours)
 
-71 projects so far.
+72 projects so far.
 
 ## Home screens built as their own app
 
@@ -57,6 +57,7 @@ This repo's launcher with new looks or features, often tuned for one TV. Good pl
 | [Glass and day/night on a Polytron](https://github.com/andikatuluspangestu/cleanyourtv/tree/polytron-glass-launcher) | The launcher with a frosted-glass dock over a blurred wallpaper, day and night wallpapers that crossfade at set hours, a Recents tool and a Wi-Fi panel. No internet permission | Polytron 2K (MediaTek mt5867), Android TV 11 | [andikatuluspangestu](https://github.com/andikatuluspangestu) |
 | [glassOS-tv](https://github.com/jmarknavarro/glassOS-tv) | A Liquid Glass-style fork: a frosted lock-screen clock, a glass dock, four icon styles, photo wallpapers and a Home settings panel on the TV. About 300 KB, no internet permission | Xiaomi MiTV-AXFU0, Google TV 14 | [jmarknavarro](https://github.com/jmarknavarro) |
 | [Google TV style home](https://github.com/SferaDev/android-tv/tree/dev) | A fork with a Google TV style home: a hero backdrop, Continue watching from other apps' Watch Next rows, recent apps and games, games streamed from a PC through Moonlight with on-TV pairing, a TV tab, and settings stored on the TV | Xiaomi MiTV-MOEU0, Google TV 14 | [SferaDev](https://github.com/SferaDev) |
+| [Android 5.1 Hisense adapter](https://github.com/Drmufeng/cleanyourtv/tree/adapter/android-5.1) ([how it works](https://github.com/Drmufeng/cleanyourtv/blob/adapter/android-5.1/FORK.md), [screenshot](https://github.com/Drmufeng/cleanyourtv/blob/ea25d601316a90a024c2b3a85f504285598048eb/docs/showcase/hisense-led55mu7000u.jpg)) | An experimental API 22 fork with legacy fallbacks and bundled wallpaper; stock Home stays enabled. UI and injected D-pad navigation tested; physical remote, HDMI, Live TV and cold boot unverified | Hisense LED55MU7000U, Android 5.1.1 | [Drmufeng](https://github.com/Drmufeng) |
 | [Hisense 55U6K: reorder and weather](https://github.com/vlaship/cleanyourtv/tree/hisense-55u6k) | A fork with remote reordering (hold OK), the dock under the clock, a weather line and a click on every move | Hisense 55U6K, Google TV 11 | [vlaship](https://github.com/vlaship) |
 | [Hisense FFM: weather, gear and Recent apps](https://github.com/Sumyabazar1/cleanyourtv/blob/hisense-ffm/HISENSE_FFM.md) ([screenshot](https://raw.githubusercontent.com/Sumyabazar1/cleanyourtv/b4fb78a/docs/hisense-ffm/home.jpg)) | A fork with one row of every app, a Google TV style gear, the weather, AQI and three days from Open-Meteo, Recent apps and the YouTube and HDMI buttons mapped. Network is used only for the weather | Hisense SmartTV 4K FFM (lushan, MediaTek MT9676), Google TV 12 | [Sumyabazar1](https://github.com/Sumyabazar1) |
 | [Hisense restyle](https://github.com/YouLop009/tv-vibehack/tree/style-modifications) | A six-column restyle with an app menu, a Wi-Fi picker in the header, daily greetings and four glass finishes | Hisense SmartTV 4K FFM, Android 12 | [YouLop009](https://github.com/YouLop009) |
@@ -147,7 +148,7 @@ By the TV each project was built and tested on. Most of them run on other Androi
 - **FPT Play:** [TV Remote](https://github.com/HoangTran0410/tv-remote)
 - **Haier:** [cleanyourtv for Haier](https://github.com/abuhasanrumi/cleanyourtv-haier)
 - **HAAM:** [HDMI input visibility](https://github.com/midhatn/cleanyourtv/tree/feature/hdmi-input-visibility)
-- **Hisense:** [Hisense 55U6K: reorder and weather](https://github.com/vlaship/cleanyourtv/tree/hisense-55u6k), [Hisense FFM: weather, gear and Recent apps](https://github.com/Sumyabazar1/cleanyourtv/blob/hisense-ffm/HISENSE_FFM.md), [Hisense restyle](https://github.com/YouLop009/tv-vibehack/tree/style-modifications)
+- **Hisense:** [Android 5.1 Hisense adapter](https://github.com/Drmufeng/cleanyourtv/tree/adapter/android-5.1), [Hisense 55U6K: reorder and weather](https://github.com/vlaship/cleanyourtv/tree/hisense-55u6k), [Hisense FFM: weather, gear and Recent apps](https://github.com/Sumyabazar1/cleanyourtv/blob/hisense-ffm/HISENSE_FFM.md), [Hisense restyle](https://github.com/YouLop009/tv-vibehack/tree/style-modifications)
 - **Insignia:** [Insignia Clean Home](https://github.com/yjack-coder/insignia-clean-home)
 - **LG:** [Clean Your TV — LG webOS](https://github.com/Razdva122/clean-your-tv-lg-webos), [CleanYourTV for LG webOS](https://github.com/lasharor/cleanyourtv-WebOS), [webOS launcher](https://github.com/OmkarK97/webos-vibehack)
 - **Motorola:** [TV Motorola Launcher](https://github.com/kartikcool15/tv-motorola-launcher)
