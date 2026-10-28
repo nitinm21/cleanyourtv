@@ -1,0 +1,33 @@
+# TCL 40" Google TV, India (device G13, product G13_2K_GB, MediaTek mt5867, ~1 GB RAM)
+# Google TV 14 (SDK 34), build TCL/G13_2K_GB/G13:14/UKN2.241110.001/AU13:user/release-keys,
+# security patch 2026-06-01. ro.adb.secure=1.
+# Retail listing: TCL 101 cm (40 inch) 2K QHD Google TV, V5C series.
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/tcl-g13-google-tv/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/tcl-g13-google-tv/debloat.txt
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# Stock launcher: com.google.android.apps.tv.launcherx. Live TV / tuner: com.mediatek.wwtv.tvcenter.
+# Keep com.tcl.suspension (source/standby), com.mediatek.tv.service and com.mediatek.tvinput (HDMI/tuner).
+#
+# Not done here: no custom launcher. See README.md in this folder — on this exact board the stock
+# launcher is force-relaunched by a hardcoded platform service (BootModeAppToForeground, from the
+# com.android.libraries.tv.tvsystem shared library) that bypasses RoleManager's HOME role entirely,
+# unlike the G08 board (also Google TV 14, same debloat approach) where the launcher swap works.
+#
+# All 7 packages below were disabled and reboot-checked (pm list packages -d persisted, TV booted
+# normally, Home resolved to the stock launcher as expected) on 23 October 2026.
+
+# TCL telemetry, factory tools and duplicate apps
+com.tcl.logkit                         # log capture and upload
+com.tcl.useragreement                  # EULA/privacy screens, one-time setup only
+com.tcl.messagebox                     # TCL pushed messages and promos
+com.tcl.browser                        # duplicate TV browser, redundant with any installed one
+com.tcl.factory.view                   # factory test UI
+mediatek.factorymenu.ui                # MediaTek factory test menu
+com.mediatek.MtkDemo                   # MediaTek demo app
+
+# Untested here, but present on this board and documented as safe analytics/promo bloat on the
+# same-family G07/G08/G09/G10 boards (see their debloat.txt headers) - worth trying on this model too:
+# com.tcl.guard                        # TGuard: device-use tracking, memory cleaner
+# com.tcl.partnercustomizer            # TCL tweaks to Google TV home rows

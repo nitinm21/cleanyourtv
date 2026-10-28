@@ -3,6 +3,11 @@
 # about 1 GB RAM (954 MB, low_ram=true), 32-bit only (armeabi-v7a).
 # Unlike the G08 TCL Google TVs, Live TV and HDMI are MediaTek's com.mediatek.wwtv.tvcenter, not com.tcl.tv.
 #
+# Same device/product on a newer firmware sub-build (UKN2.241110.001 AU13): the launcher half that
+# works here failed on that unit even with the exact sequence below, landing on setupwraith instead -
+# see examples/tcl-g13-google-tv/README.md before assuming this list's launcher steps are solid on
+# every AU-revision of this build.
+#
 # Apply:   TV_HOST=<tv ip> tools/disable.sh examples/tcl-43s5k/debloat.txt
 # Undo:    TV_HOST=<tv ip> tools/restore.sh examples/tcl-43s5k/debloat.txt com.google.android.apps.tv.launcherx
 # Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
