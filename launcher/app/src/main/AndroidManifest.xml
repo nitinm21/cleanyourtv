@@ -9,6 +9,9 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- stay_awake_while_playing: hold the screen on while another app is playing music or video.
+         Off unless a theme sets it. Normal permission, granted at install. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Needed since Android 10 to read the Wi-Fi network name for the network pill. Never requested at
          runtime: build-and-install grants it with pm grant, so lint's Android 12 "ask for COARSE with
          FINE" rule does not apply here. -->

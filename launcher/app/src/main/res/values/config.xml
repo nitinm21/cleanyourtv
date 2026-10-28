@@ -222,6 +222,9 @@
          the focused pill either way), so the connection shows at a glance, also as an icon-only button. Can also be
          set with "wifi_status_color": true in a theme's config.json. -->
     <bool name="wifi_status_color">false</bool>
+    <!-- Keep the screen on while music or video is playing, so the sleep timer and screensaver wait
+         until playback stops. Off by default; a theme can set stay_awake_while_playing. -->
+    <bool name="stay_awake_while_playing">false</bool>
     <!-- The app library as a round button in the top bar, beside Settings (app_library must be on too). -->
     <bool name="library_button">false</bool>
     <!-- With icon_only_buttons: keep the network name on the Wi-Fi pill up to this width in dp, cut with an ellipsis.
@@ -255,6 +258,9 @@
          app_library) and App info. false keeps the old behaviour: holding OK opens the app's App info page.
          Can also be set with "tile_menu": true in a theme's config.json. -->
     <bool name="tile_menu">false</bool>
+    <!-- Hold OK on these apps opens Off and App details. Off pauses that app's playback. An empty list
+         keeps holding OK as App info. A theme can set app_off_packages. -->
+    <string-array name="app_off_packages" />
 
     <!-- Grid rows left visible under the dock on the home screen. 0 = dock sits at the very bottom. Tiles shrink if
          the dock, its title and this many rows would not otherwise fit the screen height. -->
