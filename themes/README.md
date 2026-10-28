@@ -26,6 +26,15 @@ powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 th
 Every theme folder has a `screenshot.jpg` of Home with that theme on a real TV. `tools/theme.sh` never
 pushes it; it is only here so you can see a theme before you try it.
 
+## Portable ZIP transport
+
+To share a checked theme folder without changing how a TV is updated, use the host-only
+[`tools/theme_zip.py`](../tools/theme_zip.py) helper. It validates the ZIP before unpacking; then push the
+unpacked folder with the existing `theme.sh` or `theme.ps1` commands above. See
+[`tools/theme_zip.md`](../tools/theme_zip.md) for the exact portable file format and limits. This does not write
+to a TV, add an on-TV library, or make the later TV upload transactional. The normal theme push still clears
+on-TV column and motion choices as documented above, and `--reset` keeps its existing behaviour.
+
 ## Keys
 
 Every key is optional; a missing key keeps the value from `config.xml`, an unknown or wrongly typed key
