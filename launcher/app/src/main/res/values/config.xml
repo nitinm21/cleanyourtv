@@ -108,6 +108,12 @@
          remote that reports a joystick does not count. A theme can set it ("gamepad_passthrough"). -->
     <bool name="gamepad_passthrough">false</bool>
 
+    <!-- With key_filter on, the key helpers swallow Volume Up/Down and repeat a held one themselves. For firmware
+         that applies a volume key before the filter and again when the helper hands it back, so one tap moves two
+         steps (TCL G03 / BeyondTV4 on Android 11, #1100); a swallowed key gets no auto-repeat from Android, hence
+         the helper's own. Leave it off where a tap is one step. A theme can set it ("consume_volume_keys"). -->
+    <bool name="consume_volume_keys">false</bool>
+
     <!-- Vendor source numbers for the Inputs menu, "HW<n>=<number>" by the framework input id's last part
          (`tools/tv.py 'dumpsys tv_input'` lists them). A mapped input opens by sending input_action with the
          number as the int extra "input"; "HW<n>=-" leaves a port the board reports but the set does not have
