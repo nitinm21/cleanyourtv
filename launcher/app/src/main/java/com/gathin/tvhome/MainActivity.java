@@ -1059,9 +1059,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         super.onTrimMemory(level);
         // RUNNING_LOW and CRITICAL also arrive while Home is visible when an accessibility service keeps the
         // process in the foreground; never blank the screen the owner is looking at.
-        boolean due = level >= TRIM_MEMORY_BACKGROUND
-                || level == TRIM_MEMORY_RUNNING_LOW || level == TRIM_MEMORY_RUNNING_CRITICAL;
-        if (!due || started) return;
+        if (!MemoryTrimPolicy.shouldRelease(level, started)) return;
         adapter.clear();
         // Detach the adapter too: with Home stopped no layout pass runs, so the tile views (and the bitmaps
         // they hold) would stay attached until Home comes back. setAdapter(null) recycles them now.
@@ -1069,6 +1067,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         grid.getRecycledViewPool().clear();
         heroArtCache.clear();
         heroArtKey = null;
+        wallpaperPlayer.releaseForMemoryPressure();
         tileRefresh.invalidate();
     }
 
