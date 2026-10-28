@@ -45,6 +45,7 @@
     <string name="home_settings">Головний екран за замовчуванням</string>
     <string name="home_settings_help">Виберіть оригінальний головний екран, щоб більше не використовувати CleanYourTV як головний екран, або CleanYourTV, щоб повернутися. Оригінальний головний екран має бути увімкнений, а телевізор має показувати вибір головного екрана; якщо його було вимкнено, спершу скористайтеся скриптом відновлення.</string>
     <string name="launcher_settings">Налаштування лаунчера</string>
+    <string name="theme_picker">Вибрати тему</string>
     <string name="columns_label">Застосунків у рядку</string>
     <string name="rows_below_dock_label">Рядків під доком</string>
     <string name="wallpaper_label">Шпалери</string>

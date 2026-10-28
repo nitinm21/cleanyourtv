@@ -26,6 +26,19 @@ powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 th
 Every theme folder has a `screenshot.jpg` of Home with that theme on a real TV. `tools/theme.sh` never
 pushes it; it is only here so you can see a theme before you try it.
 
+## Pick a theme on the TV
+
+After installing a launcher build that includes the picker, stage the catalog once from the computer:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\theme.ps1 -TvHost 192.168.1.50 -InstallPicker
+```
+
+Add a local theme folder with `-AdditionalTheme <folder>`; it stays on this computer and its files are
+copied to the launcher's private app storage on the TV. Then open Launcher settings, choose a theme,
+preview it with the remote, and press OK to apply. The catalog and preview images are kept outside the
+APK, so they do not add to its size. Re-run `-InstallPicker` after adding or changing themes.
+
 ## Keys
 
 Every key is optional; a missing key keeps the value from `config.xml`, an unknown or wrongly typed key

@@ -67,6 +67,7 @@
     <string name="card_state_new_key">Новый ключ</string>
     <string name="card_state_new_label">Новое название</string>
     <string name="launcher_settings">Настройки главного экрана</string>
+    <string name="theme_picker">Выбрать тему</string>
     <string name="columns_label">Приложений в ряду</string>
     <string name="dock_opacity_label">Непрозрачность панели дока</string>
     <string name="rows_below_dock_label">Рядов под доком</string>

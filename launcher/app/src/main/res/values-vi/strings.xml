@@ -27,6 +27,7 @@
     <string name="home_settings">Chọn màn hình chính mặc định</string>
     <string name="home_settings_help">Chọn màn hình chính gốc để thôi dùng CleanYourTV, hoặc chọn CleanYourTV để dùng lại. Launcher gốc phải đang bật và TV phải có mục chọn màn hình chính; nếu launcher gốc đã bị tắt, hãy chạy script khôi phục trước.</string>
     <string name="launcher_settings">Cài đặt launcher</string>
+    <string name="theme_picker">Chọn chủ đề</string>
     <string name="columns_label">Số ứng dụng mỗi hàng</string>
     <string name="dock_opacity_label">Độ đậm của thanh dock</string>
     <string name="animations_state">Hiệu ứng: %1$s</string>

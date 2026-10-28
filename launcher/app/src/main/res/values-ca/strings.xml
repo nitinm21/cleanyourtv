@@ -23,6 +23,7 @@
     <string name="stats_storage">Emmagatzematge %1$s lliure</string>
     <string name="dream_name">Rellotge</string>
     <string name="launcher_settings">Configuració del llançador</string>
+    <string name="theme_picker">Tria un tema</string>
     <string name="columns_label">Aplicacions per fila</string>
     <string name="dock_opacity_label">Opacitat de la barra del dock</string>
     <string name="animations_state">Animacions: %1$s</string>

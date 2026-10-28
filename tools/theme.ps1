@@ -1,11 +1,14 @@
-# Windows version of theme.sh: push a theme folder (config.json, and optionally a wallpaper.jpg or a
-# wallpapers/ collection) to the launcher on the TV and restart Home. See themes/README.md for the keys.
+# Windows version of theme.sh: push a theme folder to the TV, or stage the theme catalog for the
+# on-TV picker. See themes/README.md for the keys and picker setup.
 #
 # Usage: tools\theme.ps1 -TvHost 192.168.1.50 themes\aurora
 #        tools\theme.ps1 -TvHost 192.168.1.50 -Reset
+#        tools\theme.ps1 -TvHost 192.168.1.50 -InstallPicker [-AdditionalTheme work\family-tech]
 param(
     [Parameter(Position = 0)][string]$Theme,
     [switch]$Reset,
+    [switch]$InstallPicker,
+    [string]$AdditionalTheme,
     [string]$TvHost = $env:TV_HOST
 )
 $ErrorActionPreference = 'Stop'
@@ -14,6 +17,7 @@ if (-not $TvHost) { throw 'pass -TvHost <tv ip> or set $env:TV_HOST' }
 $env:TV_HOST = $TvHost
 # Resolve the theme folder against the caller's directory before moving into tools\.
 if ($Theme) { $Theme = (Resolve-Path $Theme).Path }
+if ($AdditionalTheme) { $AdditionalTheme = (Resolve-Path $AdditionalTheme).Path }
 Set-Location $PSScriptRoot
 $py = 'venv\Scripts\python.exe'
 if (-not (Test-Path $py)) { throw 'run: python -m venv tools\venv; tools\venv\Scripts\python.exe -m pip install -r tools\requirements.txt' }
@@ -54,6 +58,58 @@ function Drop($name) { "rm -f $dir/$name 2>/dev/null; content delete --uri $uri/
 # pictures is read back from it, so a reset that left the pictures behind still shows the theme it just removed.
 # Both paths use this one string (the same one theme.sh has).
 $clearWallpapers = "mkdir -p $dir/wallpapers 2>/dev/null; rm -f $dir/wallpapers/*.jpg $dir/wallpapers/*.jpeg $dir/wallpapers/*.png $dir/wallpapers/*.webp $dir/wallpapers/*.JPG $dir/wallpapers/*.JPEG $dir/wallpapers/*.PNG $dir/wallpapers/*.WEBP 2>/dev/null; content delete --uri $uri/wallpapers 2>/dev/null"
+
+if ($InstallPicker) {
+    if ($Theme -or $Reset) { throw '-InstallPicker cannot be combined with a theme folder or -Reset' }
+    $themeFolders = @(Get-ChildItem '..\themes' -Directory)
+    if ($AdditionalTheme) {
+        if (-not (Test-Path $AdditionalTheme -PathType Container)) { throw "not a theme folder: $AdditionalTheme" }
+        $themeFolders += Get-Item $AdditionalTheme
+    }
+    $ids = @{}
+    foreach ($folder in $themeFolders) {
+        $id = $folder.Name
+        if ($id -notmatch '^[A-Za-z0-9_-]{1,64}$') { throw "unsupported theme folder name: $id" }
+        if ($ids.ContainsKey($id)) { throw "duplicate theme id: $id" }
+        $ids[$id] = $true
+        $config = Join-Path $folder.FullName 'config.json'
+        if (-not (Test-Path $config -PathType Leaf)) { throw "no config.json in $($folder.FullName)" }
+        try { Get-Content $config -Raw | ConvertFrom-Json | Out-Null } catch { throw "$config is not valid JSON" }
+
+        $remote = "themes/$id"
+        & $py -I b64push.py $config (Stage "$remote/config.json") | Out-Null
+        & $py -I tv.py (Put "$remote/config.json") | Out-Null
+        $wallpaper = Join-Path $folder.FullName 'wallpaper.jpg'
+        if (Test-Path $wallpaper -PathType Leaf) {
+            & $py -I b64push.py $wallpaper (Stage "$remote/wallpaper.jpg") | Out-Null
+            & $py -I tv.py (Put "$remote/wallpaper.jpg") | Out-Null
+        } else {
+            & $py -I tv.py (Drop "$remote/wallpaper.jpg") | Out-Null
+        }
+
+        $collection = Join-Path $folder.FullName 'wallpapers'
+        & $py -I tv.py "content delete --uri $uri/$remote/wallpapers 2>/dev/null" | Out-Null
+        if (Test-Path $collection -PathType Container) {
+            Get-ChildItem $collection -File | Where-Object { $_.Extension -match '^\.(jpg|jpeg|png|webp)$' } | ForEach-Object {
+                if ($_.Name -notmatch '^[A-Za-z0-9_.-]+$') { throw "unsupported wallpaper filename: $($_.Name)" }
+                $name = "$remote/wallpapers/$($_.Name)"
+                & $py -I b64push.py $_.FullName (Stage $name) | Out-Null
+                & $py -I tv.py (Put $name) | Out-Null
+            }
+            $captions = Join-Path $collection 'captions.txt'
+            if (Test-Path $captions -PathType Leaf) {
+                & $py -I b64push.py $captions (Stage "$remote/wallpapers/captions.txt") | Out-Null
+                & $py -I tv.py (Put "$remote/wallpapers/captions.txt") | Out-Null
+            } else {
+                & $py -I tv.py (Drop "$remote/wallpapers/captions.txt") | Out-Null
+            }
+        } else {
+            & $py -I tv.py (Drop "$remote/wallpapers/captions.txt") | Out-Null
+        }
+    }
+    Write-Host "Installed $($ids.Count) themes for the on-TV picker. Open Launcher settings and choose a theme."
+    exit 0
+}
 
 if ($Reset) {
     & $py -I tv.py "mkdir -p $dir 2>/dev/null; $(Drop 'config.json'); $(Drop 'wallpaper.jpg'); $(Drop 'wallpapers/captions.txt'); $clearWallpapers; printf '%s' '$revision' > $tmp-theme_revision; $(Put 'theme_revision'); $restart; echo reset"

@@ -7,16 +7,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 /** Remote-friendly settings owned by the launcher; system settings stay one row away. */
 public final class LauncherSettingsActivity extends Activity {
+    private static final String TAG = "TvHome.Settings";
     static final String EXTRA_REORDER = "com.gathin.tvhome.extra.REORDER_FROM_SETTINGS";
     private SharedPreferences choices;
     private final TextView[] columnChoices = new TextView[4];
@@ -27,6 +31,8 @@ public final class LauncherSettingsActivity extends Activity {
     private TextView animationsChoice;
     private TextView advancedChoice;
     private TextView followThemeChoice;
+    private TextView themeChoice;
+    private List<ThemeCatalog.Theme> themes = Collections.emptyList();
     private int columns;
     private int rowsBelowDock;
     private int dockOpacity;
@@ -39,6 +45,12 @@ public final class LauncherSettingsActivity extends Activity {
         setContentView(R.layout.activity_launcher_settings);
         choices = getSharedPreferences(Config.SETTINGS_NAME, MODE_PRIVATE);
         Config config = Config.load(this);
+        try {
+            themes = ThemeCatalog.load(this);
+        } catch (IOException e) {
+            Log.e(TAG, "Cannot load theme catalog", e);
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
         View reorderChoice = findViewById(R.id.reorderChoice);
         reorderChoice.setVisibility(config.launcherSettingsButton ? View.VISIBLE : View.GONE);
         reorderChoice.setOnClickListener(v -> {
@@ -96,6 +108,9 @@ public final class LauncherSettingsActivity extends Activity {
         }
         wallpaperChoice = findViewById(R.id.wallpaperChoice);
         wallpaperChoice.setOnClickListener(v -> showWallpaperPicker());
+        themeChoice = findViewById(R.id.themeChoice);
+        themeChoice.setVisibility(themes.isEmpty() ? View.GONE : View.VISIBLE);
+        themeChoice.setOnClickListener(v -> showThemePicker());
         animationsChoice = findViewById(R.id.animationsChoice);
         animationsChoice.setOnClickListener(v -> {
             animations = !animations;
@@ -141,6 +156,7 @@ public final class LauncherSettingsActivity extends Activity {
                 open(SystemSettings.intent(this, Settings.ACTION_SETTINGS)));
         refresh();
         if (config.launcherSettingsButton) reorderChoice.requestFocus();
+        else if (!themes.isEmpty()) themeChoice.requestFocus();
         else columnChoices[Math.max(0, Math.min(columns - 4, 3))].requestFocus();
     }
 
@@ -184,6 +200,48 @@ public final class LauncherSettingsActivity extends Activity {
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
+    }
+
+    private void showThemePicker() {
+        if (themes.isEmpty()) return;
+        String[] labels = new String[themes.size()];
+        int selected = 0;
+        String current = choices.getString(ThemeCatalog.SELECTED_THEME_KEY, null);
+        for (int i = 0; i < themes.size(); i++) {
+            labels[i] = themes.get(i).name;
+            if (themes.get(i).id.equals(current)) selected = i;
+        }
+
+        int[] selectedTheme = {selected};
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.theme_picker)
+                .setSingleChoiceItems(labels, selected, (d, which) -> {
+                    selectedTheme[0] = which;
+                })
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        dialog.setOnShowListener(ignored -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
+                    ThemeCatalog.Theme theme = themes.get(selectedTheme[0]);
+                    dialog.dismiss();
+                    new Thread(() -> {
+                        try {
+                            ThemeCatalog.apply(this, theme);
+                            runOnUiThread(() -> {
+                                changed();
+                                refresh();
+                                Toast.makeText(this, R.string.theme_applied, Toast.LENGTH_SHORT).show();
+                            });
+                        } catch (IOException e) {
+                            Log.e(TAG, "Cannot apply theme " + theme.id, e);
+                            runOnUiThread(() ->
+                                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show());
+                        }
+                    }, "theme-apply").start();
+                }));
+        dialog.show();
     }
 
     private static int indexOf(List<File> images, String name) {
@@ -233,6 +291,12 @@ public final class LauncherSettingsActivity extends Activity {
                         : wallpaperCurrent != null ? wallpaperCurrent
                         : getString(R.string.wallpaper_theme_default)));
         followThemeChoice.setSelected(!hasOnTvChoices());
+        if (themeChoice != null && !themes.isEmpty()) {
+            String selectedTheme = choices.getString(ThemeCatalog.SELECTED_THEME_KEY, null);
+            themeChoice.setText(getString(R.string.theme_state,
+                    selectedTheme == null ? getString(R.string.theme_picker)
+                            : ThemeCatalog.displayName(selectedTheme)));
+        }
     }
 
     private boolean hasOnTvChoices() {

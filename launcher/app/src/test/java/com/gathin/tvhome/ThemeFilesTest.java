@@ -29,6 +29,19 @@ public class ThemeFilesTest {
         assertFalse(ThemeFiles.collectionImage("captions.txt"));
     }
 
+    @Test public void catalogThemeFilesAreAllowed() {
+        assertEquals("themes/glass/config.json",
+                ThemeFiles.path(Arrays.asList("themes", "glass", "config.json")));
+        assertEquals("themes/glass/wallpaper.jpg",
+                ThemeFiles.path(Arrays.asList("themes", "glass", "wallpaper.jpg")));
+        assertEquals("themes/glass/wallpapers/night.webp",
+                ThemeFiles.path(Arrays.asList("themes", "glass", "wallpapers", "night.webp")));
+        assertEquals("themes/glass/wallpapers/captions.txt",
+                ThemeFiles.path(Arrays.asList("themes", "glass", "wallpapers", "captions.txt")));
+        assertEquals("themes/glass/wallpapers",
+                ThemeFiles.collectionPath(Arrays.asList("themes", "glass", "wallpapers")));
+    }
+
     @Test public void anythingElseIsRefused() {
         assertNull(ThemeFiles.path(null));
         assertNull(ThemeFiles.path(Collections.emptyList()));
@@ -42,11 +55,17 @@ public class ThemeFilesTest {
         assertNull(ThemeFiles.path(Arrays.asList("wallpapers", ".jpg")));
         assertNull(ThemeFiles.path(Arrays.asList("other", "dusk.jpg")));
         assertNull(ThemeFiles.path(Arrays.asList("wallpapers", "sub", "dusk.jpg")));
+        assertNull(ThemeFiles.path(Arrays.asList("themes", "..", "config.json")));
+        assertNull(ThemeFiles.path(Arrays.asList("themes", "glass", "..")));
+        assertNull(ThemeFiles.path(Arrays.asList("themes", "glass", "wallpapers", "../x.jpg")));
+        assertNull(ThemeFiles.path(Arrays.asList("themes", "glass", "unknown.json")));
     }
 
     @Test public void onlyTheBareFolderIsTheCollection() {
         assertTrue(ThemeFiles.isCollection(Collections.singletonList("wallpapers")));
         assertFalse(ThemeFiles.isCollection(Arrays.asList("wallpapers", "dusk.jpg")));
         assertFalse(ThemeFiles.isCollection(Collections.singletonList("config.json")));
+        assertTrue(ThemeFiles.isCollection(Arrays.asList("themes", "glass", "wallpapers")));
+        assertFalse(ThemeFiles.isCollection(Arrays.asList("themes", "..", "wallpapers")));
     }
 }

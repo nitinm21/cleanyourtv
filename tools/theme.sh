@@ -4,19 +4,36 @@
 # directory and overlays config.json on its built-in config.xml; see themes/README.md for the keys.
 #
 # Usage: TV_HOST=192.168.1.50 tools/theme.sh themes/aurora
-#        TV_HOST=192.168.1.50 tools/theme.sh --reset        # remove the overlay, back to config.xml
+#        TV_HOST=192.168.1.50 tools/theme.sh --reset
+#        TV_HOST=192.168.1.50 tools/theme.sh --install-picker [--additional-theme work/family-tech]
 set -euo pipefail
+INSTALL_PICKER=0
+ADDITIONAL_THEME_ARG=""
+if [ "${1:-}" = --install-picker ]; then
+  INSTALL_PICKER=1
+  if [ "${2:-}" = --additional-theme ]; then ADDITIONAL_THEME_ARG="${3:-}"; fi
+fi
 # Resolve the theme folder against the caller's directory before moving into tools/.
 # Git Bash's pwd says /c/Users/..., which the Windows Python cannot open; pwd -W gives C:/Users/... (as in disable.sh).
 # An absolute argument needs the same: /c/Users/... passed through as typed reached the JSON check below, which
 # could not open it and called the file "not valid JSON". A folder that does not exist keeps the path as typed,
 # so the "no config.json" message names what the caller gave.
 THEME_ARG="${1:-}"
-case "$THEME_ARG" in
-  --reset|"") ;;
-  /*) THEME_ARG="$(cd "$THEME_ARG" 2>/dev/null && { pwd -W 2>/dev/null || pwd; } || printf '%s' "$THEME_ARG")" ;;
-  *) THEME_ARG="$(pwd -W 2>/dev/null || pwd)/$THEME_ARG" ;;
-esac
+if [ "$INSTALL_PICKER" = 1 ]; then
+  THEME_ARG=""
+  if [ -n "$ADDITIONAL_THEME_ARG" ]; then
+    case "$ADDITIONAL_THEME_ARG" in
+      /*) ADDITIONAL_THEME_ARG="$(cd "$ADDITIONAL_THEME_ARG" 2>/dev/null && { pwd -W 2>/dev/null || pwd; } || printf '%s' "$ADDITIONAL_THEME_ARG")" ;;
+      *) ADDITIONAL_THEME_ARG="$(pwd -W 2>/dev/null || pwd)/$ADDITIONAL_THEME_ARG" ;;
+    esac
+  fi
+else
+  case "$THEME_ARG" in
+    --reset|"") ;;
+    /*) THEME_ARG="$(cd "$THEME_ARG" 2>/dev/null && { pwd -W 2>/dev/null || pwd; } || printf '%s' "$THEME_ARG")" ;;
+    *) THEME_ARG="$(pwd -W 2>/dev/null || pwd)/$THEME_ARG" ;;
+  esac
+fi
 cd "$(dirname "$0")"
 : "${TV_HOST:?set TV_HOST to the TV IP address, e.g. TV_HOST=192.168.1.50 $0 themes/aurora}"
 PY=venv/bin/python
@@ -65,6 +82,59 @@ del() { echo "rm -f $DIR/$1 2>/dev/null; content delete --uri $URI/$1 2>/dev/nul
 # itself, and an on-TV pick of one of its pictures is read back from it (WallpaperRotation.chosen), so a reset
 # that left the pictures behind still shows the theme it just removed. Both paths use this one string.
 CLEAR_WALLPAPERS="mkdir -p $DIR/wallpapers 2>/dev/null; rm -f $DIR/wallpapers/*.jpg $DIR/wallpapers/*.jpeg $DIR/wallpapers/*.png $DIR/wallpapers/*.webp $DIR/wallpapers/*.JPG $DIR/wallpapers/*.JPEG $DIR/wallpapers/*.PNG $DIR/wallpapers/*.WEBP 2>/dev/null; content delete --uri $URI/wallpapers 2>/dev/null"
+
+if [ "$INSTALL_PICKER" = 1 ]; then
+  if [ "${2:-}" = --additional-theme ]; then
+    [ "$#" -eq 3 ] && [ -n "$ADDITIONAL_THEME_ARG" ] || { echo "usage: theme.sh --install-picker [--additional-theme <folder>]" >&2; exit 1; }
+  else
+    [ "$#" -eq 1 ] || { echo "usage: theme.sh --install-picker [--additional-theme <folder>]" >&2; exit 1; }
+  fi
+  [ -z "$ADDITIONAL_THEME_ARG" ] || [ -d "$ADDITIONAL_THEME_ARG" ] || { echo "not a theme folder: $ADDITIONAL_THEME_ARG" >&2; exit 1; }
+  tv "mkdir -p $DIR/themes" >/dev/null
+  COUNT=0
+  for FOLDER in ../themes/* ${ADDITIONAL_THEME_ARG:+"$ADDITIONAL_THEME_ARG"}; do
+    [ -d "$FOLDER" ] || continue
+    ID=$(basename "$FOLDER")
+    [[ "$ID" =~ ^[A-Za-z0-9_-]{1,64}$ ]] || { echo "unsupported theme folder name: $ID" >&2; exit 1; }
+    CONFIG="$FOLDER/config.json"
+    [ -f "$CONFIG" ] || { echo "no config.json in $FOLDER" >&2; exit 1; }
+    "$PY" -I -c 'import json,sys; json.load(open(sys.argv[1], encoding="utf-8-sig"))' "$CONFIG" 2>/dev/null \
+      || { echo "$CONFIG is not valid JSON" >&2; exit 1; }
+    REMOTE="themes/$ID"
+    "$PY" -I b64push.py "$CONFIG" "$(stage "$REMOTE/config.json")"
+    tv "$(put "$REMOTE/config.json")" >/dev/null
+    if [ -f "$FOLDER/wallpaper.jpg" ]; then
+      "$PY" -I b64push.py "$FOLDER/wallpaper.jpg" "$(stage "$REMOTE/wallpaper.jpg")"
+      tv "$(put "$REMOTE/wallpaper.jpg")" >/dev/null
+    else
+      tv "$(del "$REMOTE/wallpaper.jpg")" >/dev/null
+    fi
+    tv "content delete --uri $URI/$REMOTE/wallpapers 2>/dev/null" >/dev/null
+    if [ -d "$FOLDER/wallpapers" ]; then
+      for IMAGE in "$FOLDER"/wallpapers/*; do
+        [ -f "$IMAGE" ] || continue
+        case "$IMAGE" in
+          *.jpg|*.jpeg|*.png|*.webp|*.JPG|*.JPEG|*.PNG|*.WEBP)
+            NAME=$(basename "$IMAGE")
+            [[ "$NAME" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "unsupported wallpaper filename: $NAME" >&2; exit 1; }
+            "$PY" -I b64push.py "$IMAGE" "$(stage "$REMOTE/wallpapers/$NAME")"
+            tv "$(put "$REMOTE/wallpapers/$NAME")" >/dev/null ;;
+        esac
+      done
+      if [ -f "$FOLDER/wallpapers/captions.txt" ]; then
+        "$PY" -I b64push.py "$FOLDER/wallpapers/captions.txt" "$(stage "$REMOTE/wallpapers/captions.txt")"
+        tv "$(put "$REMOTE/wallpapers/captions.txt")" >/dev/null
+      else
+        tv "$(del "$REMOTE/wallpapers/captions.txt")" >/dev/null
+      fi
+    else
+      tv "$(del "$REMOTE/wallpapers/captions.txt")" >/dev/null
+    fi
+    COUNT=$((COUNT + 1))
+  done
+  echo "Installed $COUNT themes for the on-TV picker. Open Launcher settings and choose a theme."
+  exit 0
+fi
 
 if [ "${1:-}" = --reset ]; then
   tv "mkdir -p $DIR 2>/dev/null; $(del config.json); $(del wallpaper.jpg); $(del wallpapers/captions.txt); $CLEAR_WALLPAPERS; printf '%s' '$REVISION' > $TMP-theme_revision; $(put theme_revision); $RESTART; echo reset" | tail -n 1

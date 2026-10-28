@@ -28,6 +28,7 @@
     <string name="home_settings">Velg standard startskjerm</string>
     <string name="home_settings_help">Velg den opprinnelige startskjermen for å slutte å bruke CleanYourTV, eller velg CleanYourTV for å bytte tilbake. Den opprinnelige startskjermen må være aktivert, og TV-en må støtte valg av startskjerm. Kjør tilbakeføringsskriptet først hvis den ble deaktivert.</string>
     <string name="launcher_settings">Innstillinger for startskjermen</string>
+    <string name="theme_picker">Velg tema</string>
     <string name="columns_label">Apper per rad</string>
     <string name="dock_opacity_label">Dekkevne for dock-feltet</string>
     <string name="rows_below_dock_label">Rader under favorittraden</string>
