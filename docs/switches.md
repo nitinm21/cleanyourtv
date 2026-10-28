@@ -23,6 +23,7 @@ the rules. Keys from before this rule are on its wanted list; a screenshot for o
 | Key | Screenshot |
 |---|---|
 | `columns` | <img src="../themes/six-columns/screenshot.jpg" width="320" alt="columns on a TV"> |
+| `focus_sweep` | <img src="switches/focus_sweep.jpg" width="320" alt="focus_sweep on a TV, the band crossing the focused tile"> |
 | `sky_intensity` | <img src="sky-sunset.jpg" width="320" alt="sky_intensity on a TV"> |
 | `wallpaper_rotation_minutes` | <img src="../themes/scenes/screenshot.jpg" width="320" alt="wallpaper_rotation_minutes on a TV"> |
 | `festival` | <img src="../themes/dussehra/screenshot.jpg" width="320" alt="festival on a TV"> |

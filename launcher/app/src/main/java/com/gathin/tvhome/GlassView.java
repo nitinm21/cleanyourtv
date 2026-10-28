@@ -1,13 +1,18 @@
 package com.gathin.tvhome;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 /**
  * A translucent glass slab: soft sheen fill, bright top specular, crisp rim and a faint outer glow.
@@ -15,10 +20,15 @@ import android.view.View;
  */
 public class GlassView extends View {
 
+    /** focus_sweep: how long the light band takes to cross the tile. */
+    static final long SWEEP_MS = 650;
+
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint specular = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint rim = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint glow = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint sweepPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Matrix sweepMatrix = new Matrix();
     private final RectF rect = new RectF();
     private final float density;
     private float radius;
@@ -26,6 +36,10 @@ public class GlassView extends View {
     private int glowRgb = 0xFFFFFF;
     /** Glow strength: the white glow stays faint, a coloured one needs more alpha to read as warm light. */
     private int glowAlpha = 0x30;
+    /** focus_sweep: the band's progress across the tile, 0 to 1, or -1 while no sweep runs. */
+    private float sweep = -1f;
+    private LinearGradient sweepShader;
+    private ValueAnimator sweepAnimator;
 
     public GlassView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -63,11 +77,40 @@ public class GlassView extends View {
         invalidate();
     }
 
+    /** focus_sweep: a light band crosses the tile once, left to right, as a hovered card does in ElegantFin. */
+    void sweep() {
+        if (getWidth() == 0) return;
+        if (sweepAnimator != null) sweepAnimator.cancel();
+        sweepAnimator = ValueAnimator.ofFloat(0f, 1f).setDuration(SWEEP_MS);
+        sweepAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        sweepAnimator.addUpdateListener(a -> {
+            sweep = (float) a.getAnimatedValue();
+            invalidate();
+        });
+        sweepAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                sweep = -1f;
+                invalidate();
+            }
+        });
+        sweepAnimator.start();
+    }
+
+    /** Where the band's gradient starts at a given progress: one tile width left of the tile to one width right. */
+    static float sweepOffset(float progress, float width) {
+        return (2f * progress - 1f) * width;
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         fill.setShader(new LinearGradient(0, 0, 0, h, 0x3DFFFFFF, 0x12FFFFFF, Shader.TileMode.CLAMP));
         specular.setShader(new LinearGradient(0, 0, 0, h * 0.45f, 0x66FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+        // ElegantFin's --hoverGradientH: transparent, white at 35% across 45-55%, transparent.
+        sweepShader = new LinearGradient(0, 0, w, 0, new int[]{0x00FFFFFF, 0x59FFFFFF, 0x59FFFFFF, 0x00FFFFFF},
+                new float[]{0f, 0.45f, 0.55f, 1f}, Shader.TileMode.CLAMP);
+        sweepPaint.setShader(sweepShader);
     }
 
     @Override
@@ -97,6 +140,15 @@ public class GlassView extends View {
         canvas.drawRoundRect(rect, radius, radius, specular);
         canvas.restore();
 
+        drawSweep(canvas);
         canvas.drawRoundRect(rect, radius, radius, rim);
+    }
+
+    /** The focus_sweep band, clipped by the slab's own rounded rect; nothing while no sweep runs. */
+    private void drawSweep(Canvas canvas) {
+        if (sweep < 0f || sweepShader == null) return;
+        sweepMatrix.setTranslate(sweepOffset(sweep, getWidth()), 0f);
+        sweepShader.setLocalMatrix(sweepMatrix);
+        canvas.drawRoundRect(rect, radius, radius, sweepPaint);
     }
 }

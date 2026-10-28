@@ -135,6 +135,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private FrameLayout root;
     private WallpaperPlayer wallpaperPlayer;
     private GlassView glass;
+    /** focus_sweep: a light band crosses each tile as focus lands on it. */
+    private boolean focusSweep;
     private View ambient;
     private TextView heroName;
     /** The top shelf: heroName, plus the cinematic shelf's "Last opened" line and dock position dots. */
@@ -395,6 +397,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         sky = findViewById(R.id.sky);
         sky.setIntensity(cfg.skyIntensity);
         glass = findViewById(R.id.glass);
+        focusSweep = cfg.focusSweep;
         if (festive) glass.setAccent(festival.accentColor());
         ambient = findViewById(R.id.ambient);
         // The glow is one bitmap, so its alpha can be applied while drawing it. Otherwise every frame of
@@ -1535,6 +1538,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             springX.animateToFinalPosition(x);
             springY.animateToFinalPosition(y - glassScrollShift);
         }
+        if (focusSweep && animations && !reducedMotion) glass.sweep();
         View item = (View) card.getParent();
         if (dockRow && position < COLUMNS) {
             // Dock: park it at the bottom of the screen and show the top shelf for this app.
