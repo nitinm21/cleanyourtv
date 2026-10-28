@@ -57,6 +57,14 @@ Things that bit us or contributors, so they don't bite you. Commands use `tools/
   is on: the router keeps the computer from reaching it. Add a temporary firewall rule from your
   computer to the TV on tcp/5555 only, and remove it again when you close ADB. Opening the whole
   segment, or moving the TV onto the main network for good, undoes the reason it was separate.
+- **Nothing on the network answers while a VPN runs on the computer**, not even the router: `ping`
+  prints `General failure` on Windows and port 5555 times out, although the TV is on the same Wi-Fi and
+  `arp -a` lists it. Seen with Proton VPN's free plan on Windows 11, working on a Sankey SMART_TV (CVTE,
+  HiSilicon Hi3751V350, Android 12). The VPN client's firewall blocks the local network; marking the
+  Wi-Fi as a private network does not change that. Turn on the client's local-network option and
+  reconnect: Windscribe has Allow LAN traffic (Preferences > Connection) on its free plan, Proton VPN's
+  Allow LAN connections is for paid plans only. Or disconnect the VPN for the session. Turn the option
+  off again afterwards if you use public Wi-Fi.
 - **Windows PowerShell 5.1 adds a byte-order mark** to text piped into a program, which turned the
   first batch command into gibberish. `tv.py` now strips it, and the `.ps1` scripts pipe clean UTF-8.
 - **"Allow USB debugging?" comes back** although `adb devices` already works: `tv.py` used its own
