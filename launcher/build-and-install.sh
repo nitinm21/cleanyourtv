@@ -103,6 +103,12 @@ case "$OUT" in
     exit 1 ;;
   *) echo "ERROR: pm install failed; the stock launcher was left untouched." >&2; exit 1 ;;
 esac
+# Replacing the launcher while it is Home lets Android restart it mid-update, and on a TCL G03
+# (Android 11) that instance came up with mOccludesParent=false: Home then left the previous app or
+# HDMI picture on screen (#1101). `am start` below would only reuse it, so stop it first; the start
+# then creates a fresh one. A force stop also takes the key helpers off the enabled list, so a helper
+# that was on is written back (cleared first: Android binds again only when the list changes).
+"$PY" -I ../tools/tv.py 's=$(settings get secure enabled_accessibility_services); a=$(settings get secure accessibility_enabled); am force-stop com.gathin.tvhome; case "$s" in *com.gathin.tvhome*) settings put secure enabled_accessibility_services ""; settings put secure enabled_accessibility_services "$s"; settings put secure accessibility_enabled "$a" ;; esac' >/dev/null
 # Start the launcher on its own, before the stock Home is touched. In the batch below a start that
 # fails only prints an "Error:" line, and the stock launcher would be disabled anyway, leaving the TV
 # with no usable Home (#239). "Status: ok" from `am start -W` means the activity really came up;
