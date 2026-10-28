@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Country whose streaming catalogue is shown (ISO 3166-1), and the language for titles and plots. -->
+    <string name="region" translatable="false">DK</string>
+    <string name="language" translatable="false">da-DK</string>
+
+    <!-- Your subscriptions, in the order their titles are mixed into the rows: "TMDb provider name|app package".
+         Several names, comma separated, cover a renamed service; a number instead of a name is a TMDb
+         provider id. A service TMDb does not know is listed in the status line at the bottom of the screen,
+         so you can fix the name. "drtv:" or "viaplay:" in front takes that service's titles from its own catalogue
+         instead (DR's lists below; Viaplay's most popular titles included in the subscription, and its genre
+         pages). OK on a title opens it directly on Netflix, Disney+, DRTV and Viaplay when there is a link to it,
+         else the first of its services whose app is installed. -->
+    <string-array name="services" translatable="false">
+        <item>Netflix|com.netflix.ninja</item>
+        <item>TV 2,TV 2 Play|dk.tv2.tv2playtv</item>
+        <item>drtv:DRTV|dk.dr.tvplayer</item>
+        <item>HBO Max,Max|com.wbd.stream</item>
+        <item>Disney Plus|com.disney.disneyplus</item>
+        <item>viaplay:Viaplay|com.viaplay.android</item>
+        <item>YouSee Play,YouSee|dk.yousee.tv.leanback</item>
+    </string-array>
+
+    <!-- DRTV's lists for the two rows (production.dr-massive.com, DR's unofficial API): films "Film | Netop
+         tilfoejet" and DR1's "Nyt og populaert", of which the series and seasons are used. -->
+    <string name="drtv_movies" translatable="false">409048</string>
+    <string name="drtv_series" translatable="false">339631</string>
+
+    <!-- Titles per row. -->
+    <integer name="per_row">30</integer>
+    <!-- Leave out titles with fewer TMDb votes: keeps out titles that are popular elsewhere but unknown here.
+         Danish titles get few votes; 50 still leaves DR TV about 30 movies and 30 series. -->
+    <integer name="min_votes">50</integer>
+    <!-- How long TMDb answers and posters are kept before they are fetched again, in hours. -->
+    <integer name="cache_hours">6</integer>
+
+    <color name="accent">#E0A82E</color>
+</resources>

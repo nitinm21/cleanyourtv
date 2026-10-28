@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 16:9 home-screen banner: a fan of posters, the front one with a play mark. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp" android:height="180dp" android:viewportWidth="320" android:viewportHeight="180">
+    <path android:fillColor="#15171C" android:pathData="M0,0h320v180h-320z" />
+    <path android:fillColor="#2A2418" android:pathData="M60,52h44v66h-44z" />
+    <path android:fillColor="#5A4A26" android:pathData="M96,44h48v74h-48z" />
+    <path android:fillColor="#5A4A26" android:pathData="M176,44h48v74h-48z" />
+    <path android:fillColor="#2A2418" android:pathData="M216,52h44v66h-44z" />
+    <path android:fillColor="#E0A82E" android:pathData="M132,32h56v96h-56z" />
+    <path android:fillColor="#15171C" android:pathData="M151,62l26,18l-26,18z" />
+    <path android:fillColor="#E0A82E" android:pathData="M60,140h200v4h-200z" />
+</vector>

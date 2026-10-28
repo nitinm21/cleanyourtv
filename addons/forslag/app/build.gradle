@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+}
+
+// The TMDb key never goes in git: put `tmdb.key=...` in local.properties (ignored) or set TMDB_KEY.
+def local = new Properties()
+def localFile = rootProject.file('local.properties')
+if (localFile.exists()) localFile.withInputStream { local.load(it) }
+def tmdbKey = local.getProperty('tmdb.key') ?: System.getenv('TMDB_KEY') ?: ''
+
+android {
+    namespace 'net.steensgaard.forslag'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'net.steensgaard.forslag'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+        buildConfigField 'String', 'TMDB_KEY', '"' + tmdbKey.trim() + '"'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            // Sideloaded over ADB like the launcher: signed with the debug key.
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    // android.jar's org.json is a stub on the JVM; the real one runs the parsing tests.
+    testImplementation 'org.json:json:20240303'
+}
