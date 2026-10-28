@@ -16,11 +16,16 @@
         android:icon="@drawable/banner"
         android:label="@string/app_name">
 
-        <!-- The timer picker: the app's own tile and, on the cleanyourtv launcher, its module card. -->
+        <!-- The quick bar: the app's own tile, its module card and what a remote button mapped to this app (app_keys)
+             opens; OK on the bar opens the picker. -->
         <activity
-            android:name=".TimerActivity"
+            android:name=".QuickActivity"
+            android:taskAffinity=""
+            android:launchMode="singleInstance"
             android:exported="true"
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
@@ -30,6 +35,12 @@
                 <category android:name="com.gathin.tvhome.category.DOCK_CARD" />
             </intent-filter>
             <meta-data android:name="com.gathin.tvhome.card" android:resource="@xml/module_card" />
+        </activity>
+        <!-- The full timer picker, from OK on the quick bar. -->
+        <activity
+            android:name=".TimerActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
         </activity>
 
         <!-- The last minute: a countdown over whatever is playing, with "15 more minutes" and "Now". -->
