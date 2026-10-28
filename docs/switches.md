@@ -22,6 +22,7 @@ the rules. Keys from before this rule are on its wanted list; a screenshot for o
 
 | Key | Screenshot |
 |---|---|
+| `glass_haze` | <img src="switches/glass_haze.jpg" width="320" alt="glass_haze at 50 on a TV"> |
 | `columns` | <img src="../themes/six-columns/screenshot.jpg" width="320" alt="columns on a TV"> |
 | `sky_intensity` | <img src="sky-sunset.jpg" width="320" alt="sky_intensity on a TV"> |
 | `wallpaper_rotation_minutes` | <img src="../themes/scenes/screenshot.jpg" width="320" alt="wallpaper_rotation_minutes on a TV"> |

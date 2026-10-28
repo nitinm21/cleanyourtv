@@ -108,6 +108,10 @@
          remote that reports a joystick does not count. A theme can set it ("gamepad_passthrough"). -->
     <bool name="gamepad_passthrough">false</bool>
 
+    <!-- How much white sheen the focus glass shows, 0-100. 100 is the full glass; around 50 reads as a clearer
+         slab on dark wallpapers. A theme can set it ("glass_haze"). -->
+    <integer name="glass_haze">100</integer>
+
     <!-- Vendor source numbers for the Inputs menu, "HW<n>=<number>" by the framework input id's last part
          (`tools/tv.py 'dumpsys tv_input'` lists them). A mapped input opens by sending input_action with the
          number as the int extra "input"; "HW<n>=-" leaves a port the board reports but the set does not have

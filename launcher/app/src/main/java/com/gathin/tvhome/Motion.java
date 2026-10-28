@@ -20,4 +20,21 @@ final class Motion {
         spring.setSpring(new SpringForce().setStiffness(REDUCED_STIFFNESS).setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY));
         spring.setMinimumVisibleChange(REDUCED_MIN_CHANGE);
     }
+
+    /** The focus highlight with focus_overshoot off: critically damped, so it glides onto the tile. */
+    static void glide(SpringAnimation spring, boolean advancedEffects) {
+        spring.setSpring(new SpringForce().setStiffness(advancedEffects ? 520f : 440f).setDampingRatio(1f));
+    }
+
+    /** The focus highlight's spring as the config asks for it: reduced motion, a glide, or the bouncy overshoot. */
+    static void focus(SpringAnimation spring, boolean reducedMotion, boolean focusOvershoot, boolean advancedEffects) {
+        if (reducedMotion) {
+            reduce(spring);
+        } else if (!focusOvershoot) {
+            glide(spring, advancedEffects);
+        } else {
+            spring.setSpring(new SpringForce().setStiffness(advancedEffects ? 320f : 260f)
+                    .setDampingRatio(advancedEffects ? 0.76f : 0.58f));
+        }
+    }
 }
