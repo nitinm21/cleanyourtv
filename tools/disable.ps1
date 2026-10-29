@@ -171,6 +171,33 @@ if (-not $env:TVINPUT_ALLOW -and $pkgs.Count -gt 0) {
         }
     }
 }
+# Same as disable.sh: keep the apps the TV opens its HDMI inputs (VIEW on a passthrough channel) and
+# Settings with, asked from the TV rather than guessed by name. `$env:HANDLERS_ALLOW=1` disables them anyway.
+if (-not $env:HANDLERS_ALLOW -and $pkgs.Count -gt 0) {
+    $q = 'cmd package query-activities --brief'
+    $ErrorActionPreference = 'Continue'
+    $handlers = @(& $py -I (Join-Path $repo 'tools\tv.py') "$q -a android.intent.action.VIEW -t vnd.android.cursor.item/channel 2>/dev/null; echo ==; $q -a android.settings.SETTINGS 2>/dev/null; true" 2>$null)
+    $checked = $LASTEXITCODE -eq 0
+    $ErrorActionPreference = 'Stop'
+    if (-not $checked) {
+        Write-Warning 'Could not check which listed packages open the TV''s inputs and Settings (tv.py failed). After this run, open an HDMI input and Settings from the launcher before you put the remote down.'
+    } else {
+        # `@()` so an empty or one-line answer is still an array: IndexOf throws on $null.
+        $lines = @($handlers | ForEach-Object { $_.Trim() })
+        $split = [array]::IndexOf($lines, '==')
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            if ($lines[$i] -notmatch '^([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+)/') { continue }
+            $p = $Matches[1]
+            if ($pkgs -notcontains $p) { continue }
+            if ($split -lt 0 -or $i -lt $split) {
+                Write-Warning "Skipping ${p}: the TV opens its HDMI/AV inputs and channels with it, so with it disabled the launcher's input tiles do nothing. Set `$env:HANDLERS_ALLOW=1 to disable it anyway."
+            } else {
+                Write-Warning "Skipping ${p}: the TV opens Settings with it, so with it disabled Settings does not open (and with it the way back to Developer options). Set `$env:HANDLERS_ALLOW=1 to disable it anyway."
+            }
+            $pkgs = @($pkgs | Where-Object { $_ -ne $p })
+        }
+    }
+}
 # Same as disable.sh: the state undo needs is recorded before the first command reaches the TV, and
 # a failed save leaves the TV untouched (#239).
 & $py -I (Join-Path $repo 'tools\recovery.py') --save $List

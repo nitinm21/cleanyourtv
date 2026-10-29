@@ -240,6 +240,39 @@ if [ -n "$PKGS" ] && [ -z "${TVINPUT_ALLOW:-}" ]; then
   fi
 fi
 
+# The launcher switches to an HDMI input with ACTION_VIEW on a passthrough channel URI (type
+# vnd.android.cursor.item/channel), and its Settings entry opens android.settings.SETTINGS. Whichever
+# app answers those on this TV (Live TV, a vendor input app, the Settings app) has to stay: disabled,
+# the input tiles do nothing and Settings does not open, which on a set with no Settings button on the
+# remote leaves no way to turn ADB back on (a Sony KDL-43W800G lost its inputs, a Sony W800C its
+# Settings). Ask the TV which apps answer instead of going by name; HANDLERS_ALLOW=1 disables them anyway.
+if [ -n "$PKGS" ] && [ -z "${HANDLERS_ALLOW:-}" ]; then
+  Q='cmd package query-activities --brief'
+  # The two lists are split at the "==" line; `; true` so a firmware without a match still answers.
+  if HANDLERS="$("$PY" -I tools/tv.py \
+      "$Q -a android.intent.action.VIEW -t vnd.android.cursor.item/channel 2>/dev/null; echo ==; $Q -a android.settings.SETTINGS 2>/dev/null; true" \
+      </dev/null 2>/dev/null | tr -d '\r')"; then
+    NAME_RE='s#^[[:space:]]*([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+)/.*#\1#p'
+    INPUT_APPS="$(printf '%s\n' "$HANDLERS" | sed '/^==$/,$d' | sed -n -E "$NAME_RE" | sort -u)"
+    SETTINGS_APPS="$(printf '%s\n' "$HANDLERS" | sed '1,/^==$/d' | sed -n -E "$NAME_RE" | sort -u)"
+    for p in $INPUT_APPS; do
+      printf '%s\n' "$PKGS" | grep -xF "$p" >/dev/null || continue
+      echo "Skipping $p: the TV opens its HDMI/AV inputs and channels with it, so with it disabled the" >&2
+      echo "launcher's input tiles do nothing. Set HANDLERS_ALLOW=1 to disable it anyway." >&2
+      PKGS="$(printf '%s\n' "$PKGS" | grep -vxF "$p" || true)"
+    done
+    for p in $SETTINGS_APPS; do
+      printf '%s\n' "$PKGS" | grep -xF "$p" >/dev/null || continue
+      echo "Skipping $p: the TV opens Settings with it, so with it disabled Settings does not open (and" >&2
+      echo "with it the way back to Developer options). Set HANDLERS_ALLOW=1 to disable it anyway." >&2
+      PKGS="$(printf '%s\n' "$PKGS" | grep -vxF "$p" || true)"
+    done
+  else
+    echo "Could not check which listed packages open the TV's inputs and Settings (tv.py failed). After" >&2
+    echo "this run, open an HDMI input and Settings from the launcher before you put the remote down." >&2
+  fi
+fi
+
 # The state undo needs goes to disk before the first command reaches the TV, and a failed save stops
 # here with the TV untouched: a record written afterwards would describe a TV that is already broken,
 # and a retry must not overwrite the one taken before the first change (#239).

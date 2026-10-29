@@ -55,7 +55,8 @@ def answer(command):
         return "".join(f"package:{name}\n" for name in state["installed"])
     if command == "pm list packages -d":
         return "".join(f"package:{name}\n" for name in state["disabled"])
-    if command.startswith("cmd package query-activities"):
+    # Only the HOME query: the input/Settings handler guard asks the same command for other intents.
+    if command.startswith("cmd package query-activities") and "category.HOME" in command:
         if state["claims_fail"]:
             raise Fail()
         return "".join(f"  {c if '/' in c else c + '/.MainActivity'}\n" for c in state["claims"])

@@ -688,8 +688,9 @@ and says so.
 It runs the same safety checks as `tools/disable.sh` before it disables anything, since an update is
 the moment they matter again: it leaves setupwraith on while the saved Wi-Fi network belongs to it
 (`FORCE_SETUPWRAITH=1` on Ethernet), leaves the packages under the HDMI/AV inputs on
-(`TVINPUT_ALLOW=1` if you really want them off), and never takes Home to a vendor `FallbackHome` or
-a factory-test app.
+(`TVINPUT_ALLOW=1` if you really want them off), leaves on the apps the TV opens its inputs and
+Settings with (`HANDLERS_ALLOW=1`), and never takes Home to a vendor `FallbackHome` or a factory-test
+app.
 Each package it leaves on comes with the reason and exits 1, because the TV is not back to the list
 until you deal with that one by hand.
 
