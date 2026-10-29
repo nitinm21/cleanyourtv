@@ -9,8 +9,10 @@ FONT, OUT = sys.argv[1], sys.argv[2]
 BG, LINE, DIM, GREEN = "#15181e", "#2c313a", "#aab3bd", "#cfffcf"
 W = 1600
 def f(size, wt):
+    """The Fredoka variable font at `size` pixels and weight `wt`."""
     x = ImageFont.truetype(FONT, size); x.set_variation_by_axes([wt]); return x
 def spaced(d, cx, y, t, font, sp, fill):
+    """Draws `t` centred on `cx` with `sp` extra pixels between the letters."""
     w = sum(d.textlength(c, font=font) for c in t) + sp * (len(t) - 1); x = cx - w / 2
     for c in t: d.text((x, y), c, font=font, fill=fill); x += d.textlength(c, font=font) + sp
 
