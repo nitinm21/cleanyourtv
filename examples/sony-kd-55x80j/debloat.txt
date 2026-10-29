@@ -1,0 +1,20 @@
+# Sony BRAVIA KD-55X80J (MediaTek MT5895, 3 GB), Google TV 10, build QTT2.230601.001
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/sony-kd-55x80j/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/sony-kd-55x80j/debloat.txt
+
+# Google telemetry and recommendations
+com.google.android.feedback
+com.google.android.play.games
+com.google.android.tvrecommendations
+com.google.android.partnersetup
+
+# Sony services
+com.sony.dtv.sonyselect                     # Sony Select promo rows
+com.sony.dtv.b2b.retailmode
+com.sony.dtv.bravia.feedback
+
+# Aggressive extras for a snappier UI (safe on this firmware)
+com.android.systemui
+com.android.providers.settings
+com.android.tv.settings
