@@ -1,7 +1,7 @@
 # Examples
 
 One folder per TV model, each with a `debloat.txt` listing the packages that are safe to disable
-on that firmware, grouped and commented. These are starting points: comment out anything you use.
+on that firmware, grouped and commented. These are starting points: comment out anything you use. Apply a list with `tools/disable.sh <list>` and undo it with `tools/restore.sh <list>`; nothing is ever uninstalled.
 
 | Folder | TV | OS | Notes |
 |---|---|---|---|
