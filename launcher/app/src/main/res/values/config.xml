@@ -27,6 +27,11 @@
          set "fill_dock": false. -->
     <bool name="fill_dock">true</bool>
 
+    <!-- Current temperature in the header, from open-meteo. Needs weather_lat and weather_lon. -->
+    <bool name="show_weather">false</bool>
+    <string name="weather_lat" translatable="false"></string>
+    <string name="weather_lon" translatable="false"></string>
+
     <!-- Apps never shown as tiles (e.g. the Live TV app, which the Inputs menu already covers). -->
     <string-array name="hidden_apps">
         <item>com.mediatek.wwtv.tvcenter</item>
