@@ -34,6 +34,7 @@ final class WallpaperPlayer {
     private final FrameLayout root;
     private final ImageView image;
     private final List<File> files;
+    private final File onlineDirectory;
     private final long interval;
     private final String order;
     private final SharedPreferences preferences;
@@ -50,6 +51,7 @@ final class WallpaperPlayer {
     private boolean active;
     private boolean closed;
     private boolean loading;
+    private OnlineWallpaperDownloader onlineDownloader;
     private String displayed = "";
     /** wallpaper_captions: the shown picture's name from wallpapers/captions.txt; null when off or there are none. */
     private final TextView caption;
@@ -64,6 +66,9 @@ final class WallpaperPlayer {
     WallpaperPlayer(Context context, FrameLayout root, Config config) {
         this.root = root;
         files = new ArrayList<>(config.wallpapers);
+        onlineDirectory = files.isEmpty() ? null : files.get(0).getParentFile();
+        files.removeIf(file -> !file.getName().startsWith("online_")
+                || !file.getName().endsWith(".jpg"));
         interval = config.wallpaperRotationMinutes * 60_000L;
         bitmapConfig = config.wallpaperTrueColor ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
         // The dim is painted into the picture (decode), so no full-screen shade layer is drawn on every frame.
@@ -89,7 +94,7 @@ final class WallpaperPlayer {
         names = config.wallpaperCaptions && config.wallpaperEnabled && !files.isEmpty()
                 ? WallpaperCaptions.read(files.get(0).getParentFile()) : Collections.emptyMap();
         caption = names.isEmpty() ? null : makeCaption(context, root);
-        if (config.wallpaperEnabled && !files.isEmpty()) {
+        if (config.wallpaperEnabled && onlineDirectory != null) {
             root.addView(image, 0, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             showFirst();
@@ -129,10 +134,21 @@ final class WallpaperPlayer {
     void start() {
         active = true;
         update();
+        if (onlineDownloader == null && onlineDirectory != null) {
+            onlineDownloader = new OnlineWallpaperDownloader(
+                    onlineDirectory,
+                    downloaded -> root.post(() -> {
+                        if (closed || !downloaded.isFile()) return;
+                        if (!files.contains(downloaded)) files.add(downloaded);
+                        update();
+                    }));
+        }
+        if (onlineDownloader != null) onlineDownloader.start();
     }
 
     void stop() {
         active = false;
+        if (onlineDownloader != null) onlineDownloader.stop();
     }
 
     /** The pictures the rotation picks from now: wallpaper_moods' group for the time of day, or the whole collection. */
@@ -149,6 +165,7 @@ final class WallpaperPlayer {
     void close() {
         active = false;
         closed = true;
+        if (onlineDownloader != null) onlineDownloader.close();
         decoder.shutdownNow();
     }
 
