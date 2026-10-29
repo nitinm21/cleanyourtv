@@ -33,6 +33,8 @@ Connect
   `_adb-tls-connect._tcp` with `dns-sd -B` or `adb mdns services`, ask me for the code and port under
   Developer options > Wireless debugging > Pair device with pairing code, then `adb pair`, `adb connect`
   and `adb tcpip 5555`. Android switches Wireless debugging off whenever Wi-Fi drops.
+  Some firmware runs network ADB on another fixed port instead (a projector used 5877): if 5555 refuses and
+  nothing advertises Wireless debugging, scan the TV's own TCP ports and try each open one with `TV_PORT`.
 - Tell me when the "Allow USB debugging?" prompt will appear on the TV so I can accept it.
 - If `adb install` hangs on Android 14 it is waiting for an on-screen confirmation; push the APK and run
   `pm install -r` over the shell instead.
